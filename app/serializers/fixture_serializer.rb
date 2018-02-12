@@ -24,12 +24,21 @@
 #  updated_at             :datetime         not null
 #
 
-class Fixture < ApplicationRecord
+class FixtureSerializer
+  include FastJsonapi::ObjectSerializer
+  set_type :fixture
+  attributes :kickoff_time,
+             :team_h_difficulty,
+             :code,
+             :team_h_score,
+             :team_a_score,
+             :minutes,
+             :started,
+             :finished,
+             :stats,
+             :round_day,
+             :round_id
   belongs_to :round
-  belongs_to :home_team, class_name: Team, foreign_key: :team_h_id
-  belongs_to :away_team, class_name: Team, foreign_key: :team_a_id
-
-  scope :finished, -> { where(finished: true) }
-
-  validates :code, presence: true, uniqueness: true
+  belongs_to :team_h, class_name: Team, foreign_key: :team_h_id, serializer: :team
+  belongs_to :team_a, class_name: Team, foreign_key: :team_a_id, serializer: :team
 end

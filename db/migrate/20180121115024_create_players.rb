@@ -55,6 +55,20 @@ class CreatePlayers < ActiveRecord::Migration[5.1]
       t.decimal :creativity
       t.decimal :threat
       t.decimal :ict_index
+      t.integer :open_play_crosses
+      t.integer :big_chances_created
+      t.integer :clearances_blocks_interceptions
+      t.integer :recoveries
+      t.integer :key_passes
+      t.integer :tackles
+      t.integer :winning_goals
+      t.integer :dribbles
+      t.integer :fouls
+      t.integer :errors_leading_to_goal
+      t.integer :big_chances_missed
+      t.integer :offside
+      t.integer :attempted_passes
+      t.integer :target_missed
       t.integer :ea_index
       t.jsonb :player_fixture_histories
       t.jsonb :player_past_histories

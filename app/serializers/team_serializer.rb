@@ -26,10 +26,28 @@
 #  updated_at            :datetime         not null
 #
 
-class Team < ApplicationRecord
-  has_many :players
-  has_many :home_fixtures, class_name: 'Fixture', foreign_key: :team_h_id
-  has_many :away_fixtures, class_name: 'Fixture', foreign_key: :team_a_id
+class TeamSerializer
+  include FastJsonapi::ObjectSerializer
+  set_type :team
+  attributes :name,
+             :code,
+             :short_name,
+             :strength,
+             :position,
+             :played,
+             :wins,
+             :losses,
+             :draws,
+             :points,
+             :form,
+             :current_form,
+             :strength_overall_home,
+             :strength_overall_away,
+             :strength_attack_home,
+             :strength_attack_away,
+             :strength_defence_home,
+             :strength_overall_away
 
-  validates :code, :name, :short_name, presence: true, uniqueness: true
+  has_many :home_fixtures, class: Fixture, foreign_key: :team_h_id, serializer: :fixture
+  has_many :away_fixtures, class: Fixture, foreign_key: :team_a_id, serializer: :fixture
 end

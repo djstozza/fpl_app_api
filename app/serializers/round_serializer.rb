@@ -16,23 +16,10 @@
 #  updated_at                :datetime         not null
 #
 
-class Round < ApplicationRecord
-  SUMMER_MINI_DRAFT_DEADLINE = Time.parse("01/09/#{Time.now.year}")
-  WINTER_MINI_DRAFT_DEALINE = Time.parse("01/02/#{1.year.from_now.year}")
-
+class RoundSerializer
+  include FastJsonapi::ObjectSerializer
+  set_type :round
+  attributes :name, :deadline_time, :is_previous, :is_current, :is_next, :data_checked
   has_many :fixtures
-
-  validates :name, :deadline_time, uniqueness: { case_sensitive: false }
-
-  class << self
-    def current
-      if where(is_current: true).empty?
-        find_by(is_next: true)
-      elsif find_by(is_current: true).data_checked
-        find_by(is_next: true) || find_by(is_current: true)
-      else
-        find_by(is_current: true)
-      end
-    end
-  end
+  cache_options enabled: true, cache_length: 10.minutes
 end

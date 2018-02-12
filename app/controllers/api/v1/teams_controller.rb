@@ -3,9 +3,7 @@ class Api::V1::TeamsController < ApplicationController
 
   # GET /teams
   def index
-    @teams = Team.all
-
-    render json: @teams
+    respond_with TeamSerializer.new(Team.all).serializable_hash[:data]
   end
 
   # GET /teams/1

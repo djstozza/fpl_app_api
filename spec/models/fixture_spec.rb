@@ -16,6 +16,7 @@
 #  provisional_start_time :boolean
 #  finished_provisional   :boolean
 #  round_day              :integer
+#  stats                  :jsonb
 #  round_id               :integer
 #  team_h_id              :integer
 #  team_a_id              :integer
