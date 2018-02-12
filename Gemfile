@@ -13,8 +13,6 @@ gem 'rails', '~> 5.1.4'
 gem 'pg', '~> 0.18'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
-gem 'heroku-deflater', group: :production
-gem 'pluck_to_hash'
 gem 'redis'
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
