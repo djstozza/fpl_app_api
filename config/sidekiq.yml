@@ -1,0 +1,16 @@
+:schedule:
+  RecurringRoundWorker:
+    cron: '0 */1 * * *'
+    description: 'Update round stats every hour'
+
+  RecurringFixtureWorker:
+      cron: '*/10 11-23 * * *'
+      description: 'Update fixture stats every 10 minutes between 11am and 11pm UTC'
+
+  RecurringTeamWorker:
+    cron: '*/10 11-23 * * *'
+    description: 'Update team stats every 10 minutes between 11am and 11pm UTC'
+
+  RecurringPlayerWorker:
+    cron: '*/10 11-23 * * *'
+    description: 'Update player stats every 10 minutes between 11am and 11pm UTC'
