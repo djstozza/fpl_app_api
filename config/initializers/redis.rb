@@ -1,2 +1,3 @@
-ENV["REDIS_URL"] ||= 'redis://localhost:6379'
-REDIS = Redis.new(:url => ENV["REDIS_URL"])
+if ENV["REDISCLOUD_URL"]
+  $redis = Redis.new(:url => ENV["REDISCLOUD_URL"])
+end
