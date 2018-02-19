@@ -127,7 +127,7 @@ class Teams::ProcessStats < ApplicationInteraction
   end
 
   def position
-    ladder = Team.pluck(:points, :goal_difference).sort.reverse.uniq!
+    ladder = Team.pluck(:points, :goal_difference).sort.reverse.uniq
     ladder.index([team.points, team.goal_difference]) + 1
   end
 end

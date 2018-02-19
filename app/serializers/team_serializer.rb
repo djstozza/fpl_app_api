@@ -9,11 +9,16 @@
 #  strength              :integer
 #  position              :integer
 #  played                :integer
-#  win                   :integer
-#  loss                  :integer
-#  draw                  :integer
+#  wins                  :integer
+#  losses                :integer
+#  draws                 :integer
+#  clean_sheets          :integer
+#  goals_for             :integer
+#  goals_against         :integer
+#  goal_difference       :integer
 #  points                :integer
-#  form                  :integer
+#  form                  :jsonb
+#  current_form          :string
 #  link_url              :integer
 #  strength_overall_home :integer
 #  strength_overall_away :integer
@@ -38,9 +43,13 @@ class TeamSerializer
              :wins,
              :losses,
              :draws,
+             :clean_sheets,
              :points,
              :form,
              :current_form,
+             :goals_for,
+             :goals_against,
+             :goal_difference,
              :strength_overall_home,
              :strength_overall_away,
              :strength_attack_home,
