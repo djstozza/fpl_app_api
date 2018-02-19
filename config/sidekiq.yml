@@ -14,3 +14,7 @@
   RecurringPlayerWorker:
     cron: '*/10 11-23 * * *'
     description: 'Update player stats every 10 minutes between 11am and 11pm UTC'
+
+  RecurringBroadcastCurrentRoundWorker:
+    cron: '*/10 11-23 * * *'
+    description: 'Broadcast current round fixtures every 10 minutes between 11am and 11pm UTC'
