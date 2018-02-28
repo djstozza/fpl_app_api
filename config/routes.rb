@@ -8,10 +8,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :teams
+      resources :teams, only: [:index, :show]
       resources :rounds, only: :index
       resources :round, only: :index
-      resources :players
+      resources :players, only: [:index, :show]
       resources :fixtures
     end
   end

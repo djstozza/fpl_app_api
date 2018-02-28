@@ -22,6 +22,8 @@ gem 'responders'
 gem 'httparty'
 gem 'fast_jsonapi'
 gem 'active_interaction'
+gem 'pluck_to_hash'
+gem 'nilify_blanks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production

@@ -59,4 +59,5 @@ class TeamSerializer
 
   has_many :home_fixtures, class: Fixture, foreign_key: :team_h_id, serializer: :fixture
   has_many :away_fixtures, class: Fixture, foreign_key: :team_a_id, serializer: :fixture
+  has_many :players, class: Player, foreign_key: :team_id, serializer: :players
 end
