@@ -99,6 +99,7 @@ class PlayerSerializer
              :points_per_game,
              :assists,
              :clean_sheets,
+             :goals_scored,
              :goals_conceded,
              :own_goals,
              :open_play_crosses,

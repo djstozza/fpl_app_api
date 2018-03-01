@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resources :teams, only: [:index, :show]
       resources :rounds, only: :index
       resources :round, only: :index
+      resources :positions, only: :index
       resources :players, only: [:index, :show]
       resources :fixtures
     end
