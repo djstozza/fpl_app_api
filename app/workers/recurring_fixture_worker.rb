@@ -7,5 +7,6 @@ class RecurringFixtureWorker
 
   def perform
     Fixtures::Populate.run!
+    Rounds::BroadcastCurrentRound.run!
   end
 end

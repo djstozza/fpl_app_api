@@ -22,7 +22,7 @@ class Round < ApplicationRecord
 
   has_many :fixtures
 
-  validates :name, :deadline_time, uniqueness: { case_sensitive: false }
+  validates :name, :deadline_time, presence: true, uniqueness: { case_sensitive: false }
 
   class << self
     def current
