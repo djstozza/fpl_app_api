@@ -3,17 +3,13 @@ class Api::V1::TeamsController < ApplicationController
 
   # GET /api/v1/teams
   def index
-    respond_with TeamSerializer.new(Team.all.sort).serializable_hash[:data]
+    respond_with TeamDecorator.new(nil).teams_hash
   end
 
   # GET /api/v1/teams/1
   def show
-    options = {}
-    options[:include] = [:home_fixtures, :away_fixtures]
-    team_serializer = TeamSerializer.new(@team, options).serializable_hash
-
     respond_with(
-      team: team_serializer[:data],
+      team: @team,
       fixtures: @team.decorate.fixture_hash
     )
   end

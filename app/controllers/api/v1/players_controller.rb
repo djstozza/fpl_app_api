@@ -3,8 +3,7 @@ class Api::V1::PlayersController < ApplicationController
 
   # GET /api/v1/players
   def index
-    players = params[:team_id] ? Team.find(params[:team_id]).players : Player.all
-    render json: PlayerSerializer.new(players).serializable_hash[:data]
+    render json: PlayerDecorator.new(nil).players_hash(team_id: params[:team_id])
   end
 
   # GET /api/v1/players/1

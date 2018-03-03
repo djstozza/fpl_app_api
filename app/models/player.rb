@@ -81,4 +81,5 @@
 
 class Player < ApplicationRecord
   validates :code, presence: true, uniqueness: true
+  belongs_to :team
 end

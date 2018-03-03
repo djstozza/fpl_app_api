@@ -1,4 +1,32 @@
 class TeamDecorator < ApplicationDecorator
+  def teams_hash
+    Team.pluck_to_hash(
+      :id,
+      :name,
+      :code,
+      :short_name,
+      :strength,
+      :position,
+      :played,
+      :wins,
+      :losses,
+      :draws,
+      :clean_sheets,
+      :points,
+      :form,
+      :current_form,
+      :goals_for,
+      :goals_against,
+      :goal_difference,
+      :strength_overall_home,
+      :strength_overall_away,
+      :strength_attack_home,
+      :strength_attack_away,
+      :strength_defence_home,
+      :strength_overall_away
+    ).sort { |a, b| a[:id] <=> b[:id] }
+  end
+
   def fixture_hash
     Fixture
       .joins('JOIN teams ON teams.id = fixtures.team_h_id OR teams.id = fixtures.team_a_id')

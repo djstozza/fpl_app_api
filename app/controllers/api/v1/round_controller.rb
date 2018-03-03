@@ -3,10 +3,7 @@ class Api::V1::RoundController < ApplicationController
   def index
     round = params[:round_id] ? Round.find(params[:round_id]) : Round.current
 
-    options = {}
-    options[:include] = [:fixtures]
-
-    fixtures = RoundSerializer.new(round, options).serializable_hash[:included]
+    fixtures = round.decorate.fixture_hash
 
     respond_with(
       round: round,
