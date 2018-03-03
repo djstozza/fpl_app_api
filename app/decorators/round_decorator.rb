@@ -8,7 +8,7 @@ class RoundDecorator < ApplicationDecorator
       :is_current,
       :is_next,
       :data_checked
-    )
+    ).sort { |a, b| a[:id] <=> b[:id] }
   end
 
   def fixture_hash
