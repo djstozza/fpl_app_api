@@ -122,7 +122,9 @@ class PlayerSerializer
              :creativity,
              :threat,
              :ict_index,
-             :created_at
+             :created_at,
+             :player_fixture_histories,
+             :player_past_histories
 
   belongs_to :team, class_name: Team, serializer: :team
   belongs_to :position, class_name: Position, serializer: :position

@@ -18,4 +18,5 @@ class PositionSerializer
              :singular_name_short,
              :plural_name,
              :plural_name_short
+  has_many :players, class: Player, foreign_key: :position_id, serializer: :players
 end

@@ -8,7 +8,7 @@ class Api::V1::PlayersController < ApplicationController
 
   # GET /api/v1/players/1
   def show
-    render json: @player
+    render json: { player: @player, team: @player.team, position: @player.position }
   end
 
   private
