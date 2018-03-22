@@ -13,7 +13,12 @@ Rails.application.routes.draw do
       resources :round, only: :index
       resources :positions, only: :index
       resources :players, only: [:index, :show]
+
+      resources :profile, only: [:index]
       resources :fixtures
+      mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
+        registrations:  'users/registrations',
+      }
     end
   end
 end
