@@ -21,7 +21,7 @@ class DraftPicks::Update < ApplicationInteraction
     fpl_team.players << player
     errors.merge!(fpl_team.errors)
 
-    DraftPicks::Broadcast.run(league: league, user: user, player: player)
+    DraftPickBroadcastJob.perform_later(league, user, player)
 
     league
   end
