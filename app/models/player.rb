@@ -83,4 +83,7 @@ class Player < ApplicationRecord
   validates :code, presence: true, uniqueness: true
   belongs_to :team
   belongs_to :position
+  has_many :draft_picks
+  has_and_belongs_to_many :leagues
+  has_and_belongs_to_many :fpl_teams
 end

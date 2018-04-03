@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180309212613) do
+ActiveRecord::Schema.define(version: 20180401025342) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "draft_picks", force: :cascade do |t|
+    t.integer "pick_number"
+    t.boolean "mini_draft", default: false
+    t.bigint "league_id"
+    t.bigint "player_id"
+    t.bigint "fpl_team_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fpl_team_id"], name: "index_draft_picks_on_fpl_team_id"
+    t.index ["league_id"], name: "index_draft_picks_on_league_id"
+    t.index ["player_id"], name: "index_draft_picks_on_player_id"
+  end
 
   create_table "fixtures", force: :cascade do |t|
     t.string "kickoff_time"
@@ -38,6 +51,55 @@ ActiveRecord::Schema.define(version: 20180309212613) do
     t.index ["round_id"], name: "index_fixtures_on_round_id"
     t.index ["team_a_id"], name: "index_fixtures_on_team_a_id"
     t.index ["team_h_id"], name: "index_fixtures_on_team_h_id"
+  end
+
+  create_table "fpl_team_lists", force: :cascade do |t|
+    t.bigint "fpl_team_id"
+    t.bigint "round_id"
+    t.integer "total_score"
+    t.integer "rank"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fpl_team_id"], name: "index_fpl_team_lists_on_fpl_team_id"
+    t.index ["round_id"], name: "index_fpl_team_lists_on_round_id"
+  end
+
+  create_table "fpl_teams", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "user_id"
+    t.bigint "league_id"
+    t.integer "total_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "draft_pick_number"
+    t.index ["league_id"], name: "index_fpl_teams_on_league_id"
+    t.index ["name"], name: "index_fpl_teams_on_name", unique: true
+    t.index ["user_id"], name: "index_fpl_teams_on_user_id"
+  end
+
+  create_table "fpl_teams_players", id: false, force: :cascade do |t|
+    t.bigint "fpl_team_id", null: false
+    t.bigint "player_id", null: false
+    t.index ["fpl_team_id"], name: "index_fpl_teams_players_on_fpl_team_id"
+    t.index ["player_id"], name: "index_fpl_teams_players_on_player_id"
+  end
+
+  create_table "leagues", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "commissioner_id"
+    t.integer "status", default: 0
+    t.index ["commissioner_id"], name: "index_leagues_on_commissioner_id"
+    t.index ["name"], name: "index_leagues_on_name", unique: true
+  end
+
+  create_table "leagues_players", id: false, force: :cascade do |t|
+    t.bigint "league_id", null: false
+    t.bigint "player_id", null: false
+    t.index ["league_id"], name: "index_leagues_players_on_league_id"
+    t.index ["player_id"], name: "index_leagues_players_on_player_id"
   end
 
   create_table "players", force: :cascade do |t|
@@ -201,4 +263,5 @@ ActiveRecord::Schema.define(version: 20180309212613) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "leagues", "users", column: "commissioner_id"
 end

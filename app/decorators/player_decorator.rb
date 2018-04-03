@@ -1,7 +1,10 @@
 class PlayerDecorator < ApplicationDecorator
-  def players_hash(team_id: nil)
-    record = team_id ? Player.where(team_id: team_id) : Player
-    record.pluck_to_hash(
+  def name
+    "#{first_name} #{last_name}"
+  end
+
+  def players_hash
+    pluck_to_hash(
       :id,
       :first_name,
       :last_name,

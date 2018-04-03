@@ -10,7 +10,8 @@ class Api::V1::TeamsController < ApplicationController
   def show
     respond_with(
       team: @team,
-      fixtures: @team.decorate.fixture_hash
+      fixtures: @team.decorate.fixture_hash,
+      players: PlayerDecorator.new(@team.players).players_hash
     )
   end
 

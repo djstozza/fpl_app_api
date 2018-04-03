@@ -26,6 +26,10 @@ GEM
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
     active_interaction (3.6.1)
       activemodel (>= 4, < 6)
+    active_interaction-active_job (0.3.0)
+      active_interaction
+      activejob
+      activesupport
     activejob (5.1.5)
       activesupport (= 5.1.5)
       globalid (>= 0.3.6)
@@ -220,6 +224,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_interaction
+  active_interaction-active_job
   byebug
   database_cleaner
   devise_token_auth

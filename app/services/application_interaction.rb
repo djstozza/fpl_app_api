@@ -9,14 +9,11 @@ module ActiveInteractionObjectId
     object_filters.each do |field, filter|
       id_field = :"#{field}_id"
 
-      if inputs[id_field]
-        if inputs.key? field
-          raise ActiveInteraction::InvalidValueError, field.inspect
-        else
-          id = inputs.delete id_field
-          inputs[field] = filter.options[:class].find id
-        end
-      end
+      next unless inputs[id_field]
+      raise ActiveInteraction::InvalidValueError, field.inspect if inputs.key? field
+
+      id = inputs.delete id_field
+      inputs[field] = filter.options[:class].find id
     end
 
     super inputs
@@ -25,6 +22,12 @@ end
 
 class ApplicationInteraction < ActiveInteraction::Base
   include ActiveInteractionObjectId
+  include ActiveInteraction::ActiveJob::Sidekiq::Core
+
+  class Job
+    include Sidekiq::Worker
+    include ActiveInteraction::ActiveJob::Sidekiq::JobHelper
+  end
 
   set_callback :execute, :around, lambda { |_interaction, block|
     catch :strict_error do
@@ -48,12 +51,12 @@ class ApplicationInteraction < ActiveInteraction::Base
   #
   #  object :user
   #  model_fields(:user) do
-  #    string :email
-  #    string :username
+  #    string :first_name
+  #    string :last_name
   #  end
   #
-  # >> interaction.new(user: User.new(email: 'foo@gmail.com', username: 'foo')).username
-  # => 'foo'
+  # >> interaction.new(user: User.new(first_name: 'John')).first_name
+  # => 'John'
   #
   def self.model_fields(model_name, opts = {}, &block)
     if block
@@ -245,17 +248,5 @@ class ApplicationInteraction < ActiveInteraction::Base
     opts[:unless] = [:valid?] + Array(opts[:unless])
 
     set_callback :run, :after, *args, opts, &block
-  end
-
-  def self.track_on_error(category, event, opts = {}, &block)
-    callback_opts = opts.extract!(:if, :unless, :prepend)
-
-    after_failed_run callback_opts do
-      opts = opts.reverse_merge(
-        error_fields: errors.keys
-      )
-
-      track(category, event, opts, &block)
-    end
   end
 end

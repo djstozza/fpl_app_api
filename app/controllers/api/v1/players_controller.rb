@@ -3,7 +3,7 @@ class Api::V1::PlayersController < ApplicationController
 
   # GET /api/v1/players
   def index
-    render json: PlayerDecorator.new(nil).players_hash(team_id: params[:team_id])
+    render json: PlayerDecorator.new(Player.all).players_hash
   end
 
   # GET /api/v1/players/1
