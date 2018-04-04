@@ -29,7 +29,7 @@ class LeagueDecorator < ApplicationDecorator
   end
 
   def current_draft_pick
-    draft_picks.order(:pick_number).where(player_id: nil).first
+    draft_picks.order(:pick_number).find_by(player_id: nil, mini_draft: false)
   end
 
   def all_draft_picks
@@ -45,7 +45,8 @@ class LeagueDecorator < ApplicationDecorator
       :short_name,
       'teams.name as team_name',
       :first_name,
-      :last_name
+      :last_name,
+      :mini_draft,
     )
   end
 end
