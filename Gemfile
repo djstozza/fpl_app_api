@@ -14,6 +14,7 @@ gem 'pg', '~> 0.18'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 gem 'redis'
+gem 'redis-rails'
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
 gem 'rufus-scheduler', '3.2.2'
