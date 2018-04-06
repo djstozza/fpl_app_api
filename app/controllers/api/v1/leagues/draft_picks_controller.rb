@@ -46,7 +46,7 @@ class Api::V1::Leagues::DraftPicksController < ApplicationController
       render json: response_hash
     else
       response_hash[:error] = outcome.errors
-      render json: response_hash
+      render json: response_hash, status: :unprocessable_entity
     end
   end
 
