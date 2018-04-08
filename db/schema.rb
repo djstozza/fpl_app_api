@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180401025342) do
+ActiveRecord::Schema.define(version: 20180406203550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20180401025342) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "draft_pick_number"
+    t.integer "mini_draft_pick_number"
     t.index ["league_id"], name: "index_fpl_teams_on_league_id"
     t.index ["name"], name: "index_fpl_teams_on_name", unique: true
     t.index ["user_id"], name: "index_fpl_teams_on_user_id"
@@ -100,6 +101,18 @@ ActiveRecord::Schema.define(version: 20180401025342) do
     t.bigint "player_id", null: false
     t.index ["league_id"], name: "index_leagues_players_on_league_id"
     t.index ["player_id"], name: "index_leagues_players_on_player_id"
+  end
+
+  create_table "list_positions", force: :cascade do |t|
+    t.bigint "fpl_team_list_id"
+    t.bigint "player_id"
+    t.bigint "position_id"
+    t.integer "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fpl_team_list_id"], name: "index_list_positions_on_fpl_team_list_id"
+    t.index ["player_id"], name: "index_list_positions_on_player_id"
+    t.index ["position_id"], name: "index_list_positions_on_position_id"
   end
 
   create_table "players", force: :cascade do |t|

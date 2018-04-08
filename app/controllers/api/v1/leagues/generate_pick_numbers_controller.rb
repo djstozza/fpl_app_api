@@ -4,7 +4,7 @@ class Api::V1::Leagues::GeneratePickNumbersController < ApplicationController
   # PUT /leagues/:league_id/generate_pick_numbers.json
   def update
     outcome = ::Leagues::GeneratePickNumbers.run(permitted_params.merge(user: current_api_v1_user))
-    league = outcome.result
+    league = outcome.result || outcome.league
 
     response_hash = {
       league: league,

@@ -14,9 +14,13 @@ class DraftPicks::Update < ApplicationInteraction
   validate :mini_draft_picked, if: :mini_draft
   validate :player_draft_pick_uniqueness, if: :player
 
+  run_in_transaction!
+
   def execute
     mini_draft ? mini_draft_pick : draft_player
 
+    outcome = Leagues::Activate.run(league: league)
+    errors.merge!(outcome.errors)
     DraftPickBroadcastJob.perform_later(league, user, player, mini_draft)
 
     league

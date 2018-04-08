@@ -17,11 +17,19 @@ class  Api::V1::LeaguesController < ApplicationController
   end
 
   def create
-    @form = Leagues::CreateLeagueForm.run(league_params.merge(user: current_api_v1_user))
-    if @form.valid?
-      render json: { league: @form.result, success: 'League successfully created.' }
+    form = ::Leagues::CreateLeagueForm.run(league_params.merge(user: current_api_v1_user))
+
+    if form.valid?
+      league = form.result
+      render json: {
+        league: league,
+        fpl_teams: league.decorate.fpl_teams_arr,
+        commissioner: league.commissioner,
+        current_user: current_api_v1_user,
+        success: 'League successfully created.'
+      }
     else
-      render json: { error: @form.errors }, status: :unprocessable_entity
+      render json: { error: form.errors }, status: :unprocessable_entity
     end
   end
 

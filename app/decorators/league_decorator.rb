@@ -49,4 +49,18 @@ class LeagueDecorator < ApplicationDecorator
       :mini_draft,
     )
   end
+
+  def draft_response_hash
+    fpl_team_decorator = current_draft_pick&.fpl_team&.decorate
+    {
+      league: self,
+      fpl_teams: fpl_teams_arr,
+      draft_picks: all_draft_picks,
+      current_draft_pick: current_draft_pick,
+      current_draft_pick_user: current_draft_pick&.user,
+      unpicked_players: unpicked_players,
+      mini_draft_picked: (fpl_team_decorator&.mini_draft_picked? || current_draft_pick.blank?),
+      all_players_picked: (fpl_team_decorator&.all_players_picked? || current_draft_pick.blank?),
+    }
+  end
 end

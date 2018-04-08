@@ -25,6 +25,6 @@ class Leagues::GeneratePickNumbers < ApplicationInteraction
 
   def min_fpl_team_quota
     return if league.fpl_teams.count >= League::MIN_FPL_TEAM_QUOTA
-    errors.add(:base, "There must be #{League::MIN_FPL_TEAM_QUOTA} teams present for the draft to occcur.")
+    errors.add(:base, "There must be at least #{League::MIN_FPL_TEAM_QUOTA} teams present for the draft to occcur.")
   end
 end

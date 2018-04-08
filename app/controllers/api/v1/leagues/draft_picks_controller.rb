@@ -1,39 +1,20 @@
 class Api::V1::Leagues::DraftPicksController < ApplicationController
-  before_action :authenticate_api_v1_user!, only: :update
+  before_action :authenticate_api_v1_user!
 
   def index
-    league = League.find(permitted_params[:league_id])
-    league_decorator = league.decorate
-    current_draft_pick = league_decorator.current_draft_pick
-    fpl_team = current_draft_pick.fpl_team
-    fpl_team_decorator = fpl_team&.decorate
+    league = League.find(permitted_params[:league_id]).decorate
+    response_hash = league.decorate.draft_response_hash
+    response_hash[:current_user] = current_api_v1_user
 
-    render json: {
-      draft_picks: league_decorator.all_draft_picks,
-      current_draft_pick: current_draft_pick,
-      fpl_team: fpl_team,
-      mini_draft_pick: fpl_team.draft_picks.find_by(mini_draft: true).present?,
-      unpicked_players: league_decorator.unpicked_players,
-      mini_draft_picked: fpl_team_decorator&.mini_draft_picked?,
-      all_players_picked: fpl_team_decorator&.all_players_picked?,
-    }
+    render json: response_hash
   end
 
   def update
     outcome = ::DraftPicks::Update.run(permitted_params.merge(user: current_api_v1_user))
-    league_decorator = outcome.result&.decorate || outcome.league.decorate
-    current_draft_pick = league_decorator.current_draft_pick
-    fpl_team = current_draft_pick.fpl_team
-    fpl_team_decorator = fpl_team&.decorate
+    league = outcome.result || outcome.league
 
-    response_hash = {
-      draft_picks: league_decorator.all_draft_picks,
-      current_draft_pick: current_draft_pick,
-      fpl_team: fpl_team,
-      unpicked_players: league_decorator.unpicked_players,
-      mini_draft_picked: fpl_team_decorator&.mini_draft_picked?,
-      all_players_picked: fpl_team_decorator&.all_players_picked?,
-    }
+    response_hash = league.decorate.draft_response_hash
+    response_hash[:current_user] = current_api_v1_user
 
     if outcome.valid?
       success =

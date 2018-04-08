@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :list_positions
   resources :fpl_team_lists
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   require 'api_constraints'
@@ -38,6 +39,8 @@ Rails.application.routes.draw do
       resources :fpl_teams, except: :destroy
 
       resources :fpl_team_lists
+
+      resources :list_positions
 
       resources :players, only: [:index, :show]
 
