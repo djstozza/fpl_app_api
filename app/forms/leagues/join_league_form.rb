@@ -14,7 +14,6 @@ class Leagues::JoinLeagueForm < ApplicationInteraction
   validate :league_presence
   validate :fpl_team_name_uniqueness
   validate :already_joined
-  validate :min_team_quota
   validate :max_fpl_team_quota
   validate :inactive_league
 
