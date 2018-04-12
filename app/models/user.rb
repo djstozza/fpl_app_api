@@ -37,6 +37,7 @@ class User < ActiveRecord::Base
   has_many :commisioner_leagues, class_name: 'League', foreign_key: 'commissioner_id'
   has_many :fpl_teams
   has_many :draft_picks, through: :fpl_teams
+  has_many :leagues, through: :fpl_teams
 
   validates :username, :email, presence: true, uniqueness: { case_sensitive: false }
   validates :email, format: { with: Devise.email_regexp }

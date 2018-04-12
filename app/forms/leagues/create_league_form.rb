@@ -26,10 +26,6 @@ class Leagues::CreateLeagueForm < ApplicationInteraction
     league
   end
 
-  def to_model
-    league
-  end
-
   def league_name_uniqueness
     return if name.blank?
     if League.where('lower(name) = ?', name.downcase).count.positive?

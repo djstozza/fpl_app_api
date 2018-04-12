@@ -6,6 +6,7 @@ class LeagueDecorator < ApplicationDecorator
       :username,
       :name,
       :draft_pick_number,
+      :mini_draft_pick_number,
       :total_score
     )
   end
@@ -15,16 +16,7 @@ class LeagueDecorator < ApplicationDecorator
   end
 
   def unpicked_players
-    deadline_time =
-      if Time.now < Round::SUMMER_MINI_DRAFT_DEADLINE
-        Round.first.deadline_time
-      elsif Time.now < Round::WINTER_MINI_DRAFT_DEALINE
-        Round::SUMMER_MINI_DRAFT_DEADLINE
-      else
-        Round::WINTER_MINI_DRAFT_DEALINE
-      end
-
-    players = Player.where.not(id: self.players.pluck(:id)).where('players.created_at < ?', deadline_time)
+    players = Player.where.not(id: self.players.pluck(:id)).where('players.created_at < ?', drafting_deadline_time)
     PlayerDecorator.new(players).players_hash
   end
 
@@ -51,7 +43,6 @@ class LeagueDecorator < ApplicationDecorator
   end
 
   def draft_response_hash
-    fpl_team_decorator = current_draft_pick&.fpl_team&.decorate
     {
       league: self,
       fpl_teams: fpl_teams_arr,
@@ -62,5 +53,21 @@ class LeagueDecorator < ApplicationDecorator
       mini_draft_picked: (fpl_team_decorator&.mini_draft_picked? || current_draft_pick.blank?),
       all_players_picked: (fpl_team_decorator&.all_players_picked? || current_draft_pick.blank?),
     }
+  end
+
+  private
+
+  def fpl_team_decorator
+    current_draft_pick&.fpl_team&.decorate
+  end
+
+  def drafting_deadline_time
+    if Time.now < Round::SUMMER_MINI_DRAFT_DEADLINE
+      Round.first.deadline_time
+    elsif Time.now < Round::WINTER_MINI_DRAFT_DEALINE
+      Round::SUMMER_MINI_DRAFT_DEADLINE
+    else
+      Round::WINTER_MINI_DRAFT_DEALINE
+    end
   end
 end

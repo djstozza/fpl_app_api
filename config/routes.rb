@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :fpl_teams, except: :destroy
+      resources :fpl_teams, param: :fpl_team_id, except: [:create, :destroy]
 
       resources :fpl_team_lists
 

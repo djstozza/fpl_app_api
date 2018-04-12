@@ -11,6 +11,7 @@
 #  updated_at             :datetime         not null
 #  draft_pick_number      :integer
 #  mini_draft_pick_number :integer
+#  rank                   :integer
 #
 
 require 'rails_helper'

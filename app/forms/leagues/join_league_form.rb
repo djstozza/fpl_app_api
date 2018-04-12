@@ -26,10 +26,6 @@ class Leagues::JoinLeagueForm < ApplicationInteraction
     league
   end
 
-  def to_model
-    league
-  end
-
   private
 
   def league_presence

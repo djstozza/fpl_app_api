@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180406203550) do
+ActiveRecord::Schema.define(version: 20180409224028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(version: 20180406203550) do
     t.datetime "updated_at", null: false
     t.integer "draft_pick_number"
     t.integer "mini_draft_pick_number"
+    t.integer "rank"
     t.index ["league_id"], name: "index_fpl_teams_on_league_id"
     t.index ["name"], name: "index_fpl_teams_on_name", unique: true
     t.index ["user_id"], name: "index_fpl_teams_on_user_id"
