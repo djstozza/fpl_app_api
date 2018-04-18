@@ -4,8 +4,11 @@ class Api::V1::FplTeamListsController < ApplicationController
   respond_to :json
 
   def index
-    @fpl_team_lists = FplTeamList.all
-    respond_with(@fpl_team_lists)
+    fpl_team_list = FplTeamList.find_by(fpl_team_id: permitted_params[:fpl_team_id], round: Round.current)&.decorate
+    render json: {
+      fpl_team_list: fpl_team_list&.list_position_arr || [],
+      grouped_list_positions: fpl_team_list&.grouped_list_position_arr || [],
+    }
   end
 
   def show
@@ -29,11 +32,11 @@ class Api::V1::FplTeamListsController < ApplicationController
   end
 
   private
-    def set_fpl_team_list
-      @fpl_team_list = FplTeamList.find(params[:id])
+    def set_fpl_team
+      @fpl_team_list = FplTeamList.find(permitted_params[:fpl_team_id])
     end
 
-    def fpl_team_list_params
-      params[:fpl_team_list]
-    end
+  def permitted_params
+    params.permit(:fpl_team_id, :fpl_team_list_id)
+  end
 end

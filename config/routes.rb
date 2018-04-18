@@ -36,11 +36,14 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :fpl_teams, param: :fpl_team_id, except: [:create, :destroy]
+      resources :fpl_teams, except: [:create, :destroy] do
+        resources :fpl_team_lists, param: :fpl_team_list_id, only: [:index, :show, :update]
+      end
 
-      resources :fpl_team_lists
 
-      resources :list_positions
+      resources :fpl_team_list, only: :index
+
+      resources :list_positions, param: :list_position_id, only: [:show, :update]
 
       resources :players, only: [:index, :show]
 
