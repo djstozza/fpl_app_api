@@ -36,7 +36,7 @@ class FplTeamLists::ProcessSubstitution < ApplicationInteraction
   end
 
   def before_deadline_time
-    return if Time.now < round.deadline_time.to_time
+    return if Time.now < round.deadline_time
     errors.add(:base, 'The deadline time for making substitutions has passed.')
   end
 

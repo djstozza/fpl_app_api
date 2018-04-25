@@ -4,7 +4,7 @@
 #
 #  id                        :integer          not null, primary key
 #  name                      :string
-#  deadline_time             :string
+#  deadline_time             :datetime
 #  finished                  :boolean
 #  data_checked              :boolean
 #  deadline_time_epoch       :integer

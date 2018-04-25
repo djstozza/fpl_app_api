@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  resources :list_positions
-  resources :fpl_team_lists
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   require 'api_constraints'
   require 'sidekiq/web'
@@ -26,6 +24,7 @@ Rails.application.routes.draw do
                   controller: 'leagues/draft_picks'
 
         resources :fpl_teams, only: :update, param: :fpl_team_id, controller: 'leagues/fpl_teams'
+        resources :unpicked_players, only: :index, controller: 'leagues/unpicked_players'
 
         member do
           get 'edit'
@@ -39,9 +38,6 @@ Rails.application.routes.draw do
       resources :fpl_teams, except: [:create, :destroy] do
         resources :fpl_team_lists, param: :fpl_team_list_id, only: [:index, :show, :update]
       end
-
-
-      resources :fpl_team_list, only: :index
 
       resources :list_positions, param: :list_position_id, only: [:show, :update]
 
@@ -57,6 +53,12 @@ Rails.application.routes.draw do
 
       put '/leagues/:league_id/generate_pick_numbers', to: 'leagues/generate_pick_numbers#update'
       post '/leagues/:league_id/create_draft', to: 'leagues/create_draft#create'
+
+      get '/fpl_teams/:fpl_team_id/waiver_picks', to: 'fpl_teams/waiver_picks#index'
+      post '/fpl_team_lists/:fpl_team_list_id/waiver_picks', to: 'fpl_team_lists/waiver_picks#create'
+      put '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
+      delete '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id',
+        to: 'fpl_team_lists/waiver_picks#destroy'
     end
   end
 end

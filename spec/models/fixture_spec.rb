@@ -3,8 +3,8 @@
 # Table name: fixtures
 #
 #  id                     :integer          not null, primary key
-#  kickoff_time           :string
-#  deadline_time          :string
+#  kickoff_time           :datetime
+#  deadline_time          :datetime
 #  team_h_difficulty      :integer
 #  team_a_difficulty      :integer
 #  code                   :integer

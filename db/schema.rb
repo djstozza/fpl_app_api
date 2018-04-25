@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180409224028) do
+ActiveRecord::Schema.define(version: 20180425011430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,8 +29,8 @@ ActiveRecord::Schema.define(version: 20180409224028) do
   end
 
   create_table "fixtures", force: :cascade do |t|
-    t.string "kickoff_time"
-    t.string "deadline_time"
+    t.datetime "kickoff_time"
+    t.datetime "deadline_time"
     t.integer "team_h_difficulty"
     t.integer "team_a_difficulty"
     t.integer "code"
@@ -206,7 +206,7 @@ ActiveRecord::Schema.define(version: 20180409224028) do
 
   create_table "rounds", force: :cascade do |t|
     t.string "name"
-    t.string "deadline_time"
+    t.datetime "deadline_time"
     t.boolean "finished"
     t.boolean "data_checked"
     t.integer "deadline_time_epoch"
@@ -216,6 +216,7 @@ ActiveRecord::Schema.define(version: 20180409224028) do
     t.boolean "is_next"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "mini_draft"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -277,5 +278,24 @@ ActiveRecord::Schema.define(version: 20180409224028) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "waiver_picks", force: :cascade do |t|
+    t.integer "pick_number"
+    t.integer "status", default: 0
+    t.bigint "out_player_id"
+    t.bigint "in_player_id"
+    t.bigint "fpl_team_list_id"
+    t.bigint "round_id"
+    t.bigint "league_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fpl_team_list_id"], name: "index_waiver_picks_on_fpl_team_list_id"
+    t.index ["in_player_id"], name: "index_waiver_picks_on_in_player_id"
+    t.index ["league_id"], name: "index_waiver_picks_on_league_id"
+    t.index ["out_player_id"], name: "index_waiver_picks_on_out_player_id"
+    t.index ["round_id"], name: "index_waiver_picks_on_round_id"
+  end
+
   add_foreign_key "leagues", "users", column: "commissioner_id"
+  add_foreign_key "waiver_picks", "players", column: "in_player_id"
+  add_foreign_key "waiver_picks", "players", column: "out_player_id"
 end

@@ -21,6 +21,7 @@ class FplTeam < ApplicationRecord
   has_and_belongs_to_many :players
   has_many :teams, through: :players
   has_many :fpl_team_lists
+  has_many :waiver_picks, through: :fpl_team_lists
 
   QUOTAS = { team: 3, goalkeepers: 2, midfielders: 5, defenders: 5, forwards: 3, players: 15 }.freeze
 end

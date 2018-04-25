@@ -50,6 +50,23 @@ class PlayerDecorator < ApplicationDecorator
       :offside,
       :position_id,
       :team_id,
-    )
+    ).map do |hash|
+      hash['status'] = status_class_hash[hash['status'].to_sym]
+      hash
+    end
+  end
+
+
+  private
+
+  def status_class_hash
+    {
+      a: 'fa fa-check-circle',
+      d: 'fa fa-question-circle',
+      i: 'fa fa-ambulance',
+      n: 'fa fa-times-circle',
+      s: 'fa fa-gavel',
+      u: 'fa fa-times-circle',
+    }
   end
 end

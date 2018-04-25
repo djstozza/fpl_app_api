@@ -44,7 +44,6 @@ class ListPositionDecorator < ApplicationDecorator
     position_arr = list_positions.starting.where.not(player_id: out_lp.player_id).pluck(:position_id)
     position_arr << in_lp.position_id
     position_arr = position_arr.group_by(&:itself)
-    print "#{position_arr[position_hash['Forward']]} #{position_arr[position_hash['Midfielder']]} #{position_arr[position_hash['Defender']]}"
     position_arr[position_hash['Forward']].blank? ||
       position_arr[position_hash['Midfielder']].count < 2 ||
       position_arr[position_hash['Defender']].count < 3

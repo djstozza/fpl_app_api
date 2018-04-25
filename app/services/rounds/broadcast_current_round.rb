@@ -3,7 +3,7 @@ class Rounds::BroadcastCurrentRound < ApplicationInteraction
 
   def execute
     return if round.finished
-    return if round.deadline_time.to_time > Time.now
+    return if round.deadline_time > Time.now
 
     fixtures = fixtures = round.decorate.fixture_hash
 

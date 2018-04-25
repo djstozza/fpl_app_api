@@ -6,7 +6,9 @@ class Api::V1::FplTeamListsController < ApplicationController
   def index
     fpl_team_list = FplTeamList.find_by(fpl_team_id: permitted_params[:fpl_team_id], round: Round.current)&.decorate
     render json: {
-      fpl_team_list: fpl_team_list&.list_position_arr || [],
+      fpl_team_list: fpl_team_list,
+      status: fpl_team_list.status,
+      list_positions: fpl_team_list&.list_position_arr || [],
       grouped_list_positions: fpl_team_list&.grouped_list_position_arr || [],
     }
   end

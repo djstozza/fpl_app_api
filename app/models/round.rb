@@ -4,7 +4,7 @@
 #
 #  id                        :integer          not null, primary key
 #  name                      :string
-#  deadline_time             :string
+#  deadline_time             :datetime
 #  finished                  :boolean
 #  data_checked              :boolean
 #  deadline_time_epoch       :integer
@@ -17,8 +17,8 @@
 #
 
 class Round < ApplicationRecord
-  SUMMER_MINI_DRAFT_DEADLINE = Time.parse("01/09/#{Time.now.year}")
-  WINTER_MINI_DRAFT_DEALINE = Time.parse("01/02/#{1.year.from_now.year}")
+  SUMMER_MINI_DRAFT_DEADLINE = Time.parse("01/09/#{Round.first.deadline_time.year}")
+  WINTER_MINI_DRAFT_DEALINE = Time.parse("01/02/#{(Round.first.deadline_time + 1.year).year}")
 
   has_many :fixtures
 
