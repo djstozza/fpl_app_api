@@ -23,5 +23,7 @@ class League < ApplicationRecord
   has_many :fpl_teams
   has_many :users, through: :fpl_teams
   has_and_belongs_to_many :players
+  has_many :waiver_picks
+
   enum status: { generate_draft_picks: 0, create_draft: 1, draft: 2, active: 3 }
 end

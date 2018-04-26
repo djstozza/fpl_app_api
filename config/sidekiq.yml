@@ -14,3 +14,7 @@
   RecurringPlayerWorker:
     cron: '*/10 11-23 * * *'
     description: 'Update player stats every 10 minutes between 11am and 11pm UTC'
+
+  RecurringWaiverPicksWorker:
+    cron: '0 */1 * * *'
+    description: 'Check that the date is the same as the waier deadline so that picks can be processed.'

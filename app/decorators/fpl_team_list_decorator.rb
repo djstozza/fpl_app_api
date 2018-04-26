@@ -17,6 +17,7 @@ class FplTeamListDecorator < ApplicationDecorator
         :id,
         :player_id,
         :role,
+        :first_name,
         :last_name,
         :position_id,
         :singular_name_short,
