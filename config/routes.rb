@@ -10,28 +10,28 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :teams, only: [:index, :show]
 
-      resources :rounds, only: :index
+      resources :rounds, only: [:index]
 
-      resources :round, only: :index
+      resources :round, only: [:index]
 
-      resources :positions, only: :index
+      resources :positions, only: [:index]
 
-      resources :leagues, except: :destroy do
+      resources :leagues, except: [:destroy] do
         resources :draft_picks,
                   only: [:index, :update],
-                  except: :destroy,
+                  except: [:destroy],
                   param: :draft_pick_id,
                   controller: 'leagues/draft_picks'
 
-        resources :fpl_teams, only: :update, param: :fpl_team_id, controller: 'leagues/fpl_teams'
-        resources :unpicked_players, only: :index, controller: 'leagues/unpicked_players'
+        resources :fpl_teams, only: [:update], param: :fpl_team_id, controller: 'leagues/fpl_teams'
+        resources :unpicked_players, only: [:index], controller: 'leagues/unpicked_players'
 
         member do
           get 'edit'
         end
 
         collection do
-          resource :join, only: :create, to: 'leagues/join#create'
+          resource :join, only: [:create], to: 'leagues/join#create'
         end
       end
 
@@ -47,6 +47,9 @@ Rails.application.routes.draw do
 
       resources :trades, only: [:create]
 
+      resources :inter_team_trade_groups
+      resources :inter_team_trades
+
       mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
         registrations: 'users/registrations',
       }
@@ -59,6 +62,9 @@ Rails.application.routes.draw do
       put '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
       delete '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id',
         to: 'fpl_team_lists/waiver_picks#destroy'
+
+      get '/fpl_teams/:fpl_team_id/out_players', to: 'out_players#index'
+      get '/fpl_teams/:fpl_team_id/all_tradeable_players', to: 'all_tradeable_players#index'
     end
   end
 end

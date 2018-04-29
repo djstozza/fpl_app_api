@@ -1,8 +1,6 @@
 class Api::V1::TradesController < ApplicationController
   before_action :authenticate_api_v1_user!
 
-  respond_to :json
-
   def create
     outcome = ::FplTeamLists::ProcessTrade.run(permitted_params.merge(user: current_api_v1_user))
     fpl_team_list = outcome.fpl_team_list.decorate

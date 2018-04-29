@@ -1,8 +1,6 @@
 class Api::V1::ListPositionsController < ApplicationController
   before_action :authenticate_api_v1_user!, only: :update
 
-  respond_to :json
-
   def show
     list_position = ListPosition.find(permitted_params[:list_position_id])
     render json: { substitute_options: list_position.decorate.substitute_options }

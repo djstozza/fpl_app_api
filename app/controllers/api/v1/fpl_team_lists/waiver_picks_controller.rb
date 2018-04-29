@@ -1,8 +1,6 @@
 class Api::V1::FplTeamLists::WaiverPicksController < ApplicationController
-  before_action :authenticate_api_v1_user!
+  before_action :authenticate_api_v1_user!, except: :index
   before_action :set_fpl_team_list
-
-  respond_to :json
 
   def index
     render json: { waiver_picks: @fpl_team_list.decorate.waiver_picks_arr }

@@ -18,7 +18,7 @@ class League < ApplicationRecord
   belongs_to :commissioner, class_name: 'User', foreign_key: 'commissioner_id'
   has_many :draft_picks
 
-  validates :name, :code, :commissioner_id, presence: true
+  validates :name, :code, presence: true
   validates :name, uniqueness: { case_sensitive: false }
   has_many :fpl_teams
   has_many :users, through: :fpl_teams

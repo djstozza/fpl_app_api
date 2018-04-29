@@ -113,6 +113,70 @@ class FplTeamListDecorator < ApplicationDecorator
     end
   end
 
+  def all_in_players_tradeable
+    Player
+      .order(ict_index: :desc)
+      .joins(:team)
+      .joins(:position)
+      .joins('JOIN fpl_teams_players ON fpl_teams_players.player_id = players.id')
+      .joins('JOIN fpl_teams ON fpl_teams_players.fpl_team_id = fpl_teams.id')
+      .joins('JOIN leagues ON fpl_teams.league_id = leagues.id')
+      .joins('JOIN fpl_team_lists ON fpl_team_lists.fpl_team_id = fpl_teams.id')
+      .joins('JOIN rounds ON fpl_team_lists.round_id = rounds.id')
+      .joins('JOIN list_positions ON list_positions.player_id = players.id')
+      .where(leagues: { id: fpl_team.league_id }, fpl_team_lists: { round_id: round_id })
+      .where.not(fpl_team_lists: { id: id })
+      .pluck_to_hash(
+        :id,
+        'fpl_teams.id AS fpl_team_id',
+        'fpl_teams.name AS fpl_team_name',
+        'fpl_team_lists.id AS fpl_team_list_id',
+        'list_positions.id AS list_position_id',
+        :singular_name_short,
+        :last_name,
+        :status,
+        :news,
+        :event_points,
+        :total_points,
+        :short_name
+      ).map do |hash|
+        hash['status'] = status_class_hash[hash['status'].to_sym]
+        hash
+      end
+  end
+
+  def tradeable_players
+    players
+      .order(position_id: :desc, ict_index: :desc)
+      .joins(:team)
+      .joins(:position)
+      .joins('JOIN fpl_teams_players ON fpl_teams_players.player_id = players.id')
+      .joins('JOIN fpl_teams ON fpl_teams_players.fpl_team_id = fpl_teams.id')
+      .joins('JOIN fpl_team_lists ON fpl_team_lists.fpl_team_id = fpl_teams.id')
+      .pluck_to_hash(
+        :id,
+        'fpl_teams.id AS fpl_team_id',
+        'fpl_teams.name AS fpl_team_name',
+        'fpl_team_lists.id AS fpl_team_list_id',
+        :singular_name_short,
+        :last_name,
+        :status,
+        :news,
+        :event_points,
+        :total_points,
+        :short_name
+      )
+      .uniq
+      .map do |hash|
+        hash['status'] = status_class_hash[hash['status'].to_sym]
+        hash
+      end
+  end
+
+  def tradeable_fpl_teams
+    fpl_team.league.fpl_teams.where.not(id: fpl_team_id).order(:name)
+  end
+
   private
 
   def status_class_hash

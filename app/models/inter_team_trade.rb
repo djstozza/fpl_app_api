@@ -1,0 +1,2 @@
+class InterTeamTrade < ApplicationRecord
+end

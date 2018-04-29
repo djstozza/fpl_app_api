@@ -2,8 +2,6 @@ class Api::V1::FplTeamsController < ApplicationController
   before_action :authenticate_api_v1_user!
   before_action :set_fpl_team, only: [:show, :update, :destroy]
 
-  respond_to :json
-
   def index
     fpl_teams = UserDecorator.new(current_api_v1_user).fpl_teams_arr
     render json: { fpl_teams: fpl_teams }
@@ -14,6 +12,7 @@ class Api::V1::FplTeamsController < ApplicationController
       fpl_team: @fpl_team,
       current_user: current_api_v1_user,
       user_owns_fpl_team: @fpl_team.user == current_api_v1_user,
+      league_status: @fpl_team.league.status
     }
   end
 
