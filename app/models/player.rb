@@ -81,6 +81,7 @@
 
 class Player < ApplicationRecord
   validates :code, presence: true, uniqueness: true
+  validates :first_name, :last_name, presence: true
   belongs_to :team
   belongs_to :position
   has_many :draft_picks

@@ -14,5 +14,14 @@
 require 'rails_helper'
 
 RSpec.describe League, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'requires a unique name' do
+    league = FactoryBot.create(:league)
+    expect(FactoryBot.build(:league, name: league.name.upcase)).not_to be_valid
+  end
+
+  it 'requires a code, a name and a commissioner' do
+    expect(FactoryBot.build(:league, code: '')).not_to be_valid
+    expect(FactoryBot.build(:league, name: '')).not_to be_valid
+    expect(FactoryBot.build(:league, commissioner: nil)).not_to be_valid
+  end
 end

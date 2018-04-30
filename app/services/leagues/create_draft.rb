@@ -26,8 +26,7 @@ class Leagues::CreateDraft < ApplicationInteraction
           fpl_teams.reverse[index % fpl_team_count]
         end
 
-      draft_pick = DraftPick.new(pick_number: i, league: league, fpl_team: fpl_team)
-      draft_pick.save
+      draft_pick = DraftPick.create(pick_number: i, league: league, fpl_team: fpl_team)
 
       errors.merge!(draft_pick.errors)
     end

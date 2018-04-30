@@ -82,5 +82,26 @@
 require 'rails_helper'
 
 RSpec.describe Player, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'requires a unique code' do
+    player = FactoryBot.create(:player)
+
+    expect(FactoryBot.build(:player, code: player.code)).not_to be_valid
+  end
+
+  it 'has valid scopes' do
+    fwd_pos = Position.find_by(singular_name_short: 'FWD')
+    mid_pos = Position.find_by(singular_name_short: 'MID')
+    def_pos = Position.find_by(singular_name_short: 'DEF')
+    gkp_pos = Position.find_by(singular_name_short: 'GKP')
+
+    forward = FactoryBot.create(:player, position: fwd_pos)
+    midfielder = FactoryBot.create(:player, position: mid_pos)
+    defender = FactoryBot.create(:player, position: def_pos)
+    goalkeeper = FactoryBot.create(:player, position: gkp_pos)
+
+    expect(Player.forwards).to contain_exactly(forward)
+    expect(Player.midfielders).to contain_exactly(midfielder)
+    expect(Player.defenders).to contain_exactly(defender)
+    expect(Player.goalkeepers).to contain_exactly(goalkeeper)
+  end
 end

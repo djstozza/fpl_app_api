@@ -14,6 +14,7 @@
 #  is_next                   :boolean
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  mini_draft                :boolean
 #
 
 require 'rails_helper'

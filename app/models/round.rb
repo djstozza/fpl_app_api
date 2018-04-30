@@ -14,11 +14,12 @@
 #  is_next                   :boolean
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  mini_draft                :boolean
 #
 
 class Round < ApplicationRecord
-  SUMMER_MINI_DRAFT_DEADLINE = Time.parse("01/09/#{Round.first.deadline_time.year}")
-  WINTER_MINI_DRAFT_DEALINE = Time.parse("01/02/#{(Round.first.deadline_time + 1.year).year}")
+  SUMMER_MINI_DRAFT_DEADLINE = Time.parse("01/09/#{Round.first.deadline_time.year}") unless Rails.env.test?
+  WINTER_MINI_DRAFT_DEALINE = Time.parse("01/02/#{(Round.first.deadline_time + 1.year).year}") unless Rails.env.test?
 
   has_many :fixtures
 

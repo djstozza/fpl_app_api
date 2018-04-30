@@ -34,5 +34,10 @@
 require 'rails_helper'
 
 RSpec.describe Team, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'requires a unique code, name and short_name' do
+    team = FactoryBot.create(:team)
+    expect(FactoryBot.build(:team, name: team.name)).not_to be_valid
+    expect(FactoryBot.build(:team, short_name: team.short_name)).not_to be_valid
+    expect(FactoryBot.build(:team, code: team.code)).not_to be_valid
+  end
 end
