@@ -8,8 +8,12 @@ class Api::V1::FplTeamsController < ApplicationController
   end
 
   def show
+    fpl_team_list = @fpl_team.fpl_team_lists.find_by(round: Round.current)&.decorate
+
     render json: {
       fpl_team: @fpl_team,
+      fpl_team_list: fpl_team_list,
+      status: fpl_team_list&.status,
       current_user: current_api_v1_user,
       user_owns_fpl_team: @fpl_team.user == current_api_v1_user,
       league_status: @fpl_team.league.status

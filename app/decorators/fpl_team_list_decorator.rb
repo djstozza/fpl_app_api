@@ -155,7 +155,7 @@ class FplTeamListDecorator < ApplicationDecorator
       end
   end
 
-  def tradeable_players
+  def tradeable_players(ids = [])
     Player
       .order(position_id: :desc, total_points: :desc)
       .joins(:team)
@@ -168,11 +168,13 @@ class FplTeamListDecorator < ApplicationDecorator
         'list_positions.fpl_team_list_id = fpl_team_lists.id'
       )
       .where(fpl_team_lists: { id: id })
+      .where.not(id: ids)
       .pluck_to_hash(
         :id,
         'fpl_teams.id AS fpl_team_id',
         'fpl_teams.name AS fpl_team_name',
         'fpl_team_lists.id AS fpl_team_list_id',
+        'list_positions.id AS list_position_id',
         :singular_name_short,
         :last_name,
         :status,
@@ -192,7 +194,14 @@ class FplTeamListDecorator < ApplicationDecorator
     fpl_team.league.fpl_teams.where.not(id: fpl_team_id).order(:name)
   end
 
-  private
+  def inter_team_trade_group_hash
+    {
+      out_trade_groups: out_trade_groups,
+      in_trade_groups: in_trade_groups,
+    }
+  end
+
+  # private
 
   def status_class_hash
     {
@@ -226,5 +235,30 @@ class FplTeamListDecorator < ApplicationDecorator
     hash['fixture_points'] += 3 if bps_arr.first['element'] == hash['id']
     hash['fixture_points'] += 2 if bps_arr.second['element'] == hash['id']
     hash['fixture_points'] += 1 if bps_arr.third['element'] == hash['id']
+  end
+
+  def out_trade_groups
+    trade_groups = InterTeamTradeGroup.where(out_fpl_team_list_id: id).map do |tg|
+      {
+        id: tg.id,
+        trades: tg.decorate.all_inter_team_trades,
+        out_players_tradeable: tradeable_players(tg.out_player_ids),
+        in_players_tradeable: tg.in_fpl_team_list.decorate.tradeable_players(tg.in_player_ids),
+        status: tg.status,
+        in_fpl_team: tg.in_fpl_team_list.fpl_team,
+      }
+    end
+    trade_groups.group_by { |tg| tg[:status] }
+  end
+
+  def in_trade_groups
+    trade_groups = InterTeamTradeGroup
+      .where(in_fpl_team_list_id: id)
+      .where.not(status: 'pending')
+      .map do |tg|
+        { id: tg.id, trades: tg.decorate.all_inter_team_trades, status: tg.status, out_fpl_team: tg.out_fpl_team_list.fpl_team }
+      end
+
+      trade_groups.group_by { |tg| tg[:status] }
   end
 end

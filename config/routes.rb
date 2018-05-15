@@ -47,7 +47,7 @@ Rails.application.routes.draw do
 
       resources :trades, only: [:create]
 
-      resources :inter_team_trade_groups
+      resources :inter_team_trade_groups, except: [:index], param: :inter_team_trade_group_id
       resources :inter_team_trades
 
       mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
@@ -65,6 +65,7 @@ Rails.application.routes.draw do
 
       get '/fpl_teams/:fpl_team_id/out_players', to: 'out_players#index'
       get '/fpl_teams/:fpl_team_id/all_tradeable_players', to: 'all_tradeable_players#index'
+      get '/fpl_teams/:fpl_team_id/inter_team_trade_groups', to: 'inter_team_trade_groups#index'
     end
   end
 end

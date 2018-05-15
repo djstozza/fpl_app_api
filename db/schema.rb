@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180428020421) do
+ActiveRecord::Schema.define(version: 20180501121327) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20180428020421) do
     t.integer "rank"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "overall_rank"
     t.index ["fpl_team_id"], name: "index_fpl_team_lists_on_fpl_team_id"
     t.index ["round_id"], name: "index_fpl_team_lists_on_round_id"
   end

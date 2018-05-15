@@ -44,6 +44,9 @@ class Fixtures::Populate < ApplicationInteraction
         end
       end
 
+      bps_arr = fixture_json['stats'].find { |stat| stat['bps'] }.dig('bps').map { |_k, v| v }.flatten
+      stats['bps'] = bps_arr.sort { |a, b| b['value'] <=> a['value'] }
+
       fixture.update(stats: stats)
     end
   end
