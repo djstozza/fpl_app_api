@@ -50,6 +50,8 @@ Rails.application.routes.draw do
       resources :inter_team_trade_groups, except: [:index], param: :inter_team_trade_group_id
       resources :inter_team_trades
 
+      resources :mini_draft_picks
+
       mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
         registrations: 'users/registrations',
       }

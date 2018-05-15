@@ -201,7 +201,7 @@ class FplTeamListDecorator < ApplicationDecorator
     }
   end
 
-  # private
+  private
 
   def status_class_hash
     {

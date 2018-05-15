@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180501121327) do
+ActiveRecord::Schema.define(version: 20180515115323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -140,6 +140,25 @@ ActiveRecord::Schema.define(version: 20180501121327) do
     t.index ["fpl_team_list_id"], name: "index_list_positions_on_fpl_team_list_id"
     t.index ["player_id"], name: "index_list_positions_on_player_id"
     t.index ["position_id"], name: "index_list_positions_on_position_id"
+  end
+
+  create_table "mini_draft_picks", force: :cascade do |t|
+    t.integer "pick_number"
+    t.integer "season"
+    t.boolean "passed"
+    t.boolean "completed"
+    t.bigint "league_id"
+    t.bigint "out_player_id"
+    t.bigint "in_player_id"
+    t.bigint "fpl_team_id"
+    t.bigint "round_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fpl_team_id"], name: "index_mini_draft_picks_on_fpl_team_id"
+    t.index ["in_player_id"], name: "index_mini_draft_picks_on_in_player_id"
+    t.index ["league_id"], name: "index_mini_draft_picks_on_league_id"
+    t.index ["out_player_id"], name: "index_mini_draft_picks_on_out_player_id"
+    t.index ["round_id"], name: "index_mini_draft_picks_on_round_id"
   end
 
   create_table "players", force: :cascade do |t|
@@ -326,6 +345,8 @@ ActiveRecord::Schema.define(version: 20180501121327) do
   add_foreign_key "inter_team_trades", "players", column: "in_player_id"
   add_foreign_key "inter_team_trades", "players", column: "out_player_id"
   add_foreign_key "leagues", "users", column: "commissioner_id"
+  add_foreign_key "mini_draft_picks", "players", column: "in_player_id"
+  add_foreign_key "mini_draft_picks", "players", column: "out_player_id"
   add_foreign_key "waiver_picks", "players", column: "in_player_id"
   add_foreign_key "waiver_picks", "players", column: "out_player_id"
 end

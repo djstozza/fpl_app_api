@@ -7,7 +7,7 @@
 #  in_fpl_team_list_id  :integer
 #  round_id             :integer
 #  league_id            :integer
-#  status               :integer          default(0)
+#  status               :integer          default("pending")
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #
