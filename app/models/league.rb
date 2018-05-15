@@ -21,6 +21,7 @@ class League < ApplicationRecord
   validates :name, :code, presence: true
   validates :name, uniqueness: { case_sensitive: false }
   has_many :fpl_teams
+  has_many :fpl_team_lists, through: :fpl_teams
   has_many :users, through: :fpl_teams
   has_and_belongs_to_many :players
   has_many :waiver_picks
