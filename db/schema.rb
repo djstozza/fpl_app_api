@@ -145,8 +145,7 @@ ActiveRecord::Schema.define(version: 20180515115323) do
   create_table "mini_draft_picks", force: :cascade do |t|
     t.integer "pick_number"
     t.integer "season"
-    t.boolean "passed"
-    t.boolean "completed"
+    t.boolean "passed", default: false
     t.bigint "league_id"
     t.bigint "out_player_id"
     t.bigint "in_player_id"

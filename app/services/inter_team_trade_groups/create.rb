@@ -1,5 +1,8 @@
 class InterTeamTradeGroups::Create < InterTeamTradeGroups::Base
   object :user, class: User
+  object :out_list_position, class: ListPosition
+  object :in_list_position, class: ListPosition
+
   object :inter_team_trade_group, class: InterTeamTradeGroup, default: -> do
     InterTeamTradeGroup.new(
       out_fpl_team_list: out_fpl_team_list,
@@ -9,8 +12,6 @@ class InterTeamTradeGroups::Create < InterTeamTradeGroups::Base
       status: 'pending'
     )
   end
-  object :out_list_position, class: ListPosition
-  object :in_list_position, class: ListPosition
 
   validate :authorised_user_out_fpl_team
   validate :out_player_in_fpl_team

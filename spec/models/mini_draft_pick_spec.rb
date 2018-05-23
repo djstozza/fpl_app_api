@@ -6,7 +6,6 @@
 #  pick_number   :integer
 #  season        :integer
 #  passed        :boolean
-#  completed     :boolean
 #  league_id     :integer
 #  out_player_id :integer
 #  in_player_id  :integer

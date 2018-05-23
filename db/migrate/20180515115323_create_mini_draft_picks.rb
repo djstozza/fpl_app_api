@@ -3,8 +3,7 @@ class CreateMiniDraftPicks < ActiveRecord::Migration[5.1]
     create_table :mini_draft_picks do |t|
       t.integer :pick_number
       t.integer :season
-      t.boolean :passed
-      t.boolean :completed
+      t.boolean :passed, default: false
       t.references :league, index: true
       t.references :out_player, index: true, foreign_key: { to_table: :players }
       t.references :in_player, index: true, foreign_key: { to_table: :players }

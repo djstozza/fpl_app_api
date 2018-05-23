@@ -17,6 +17,7 @@ class League < ApplicationRecord
 
   belongs_to :commissioner, class_name: 'User', foreign_key: 'commissioner_id'
   has_many :draft_picks
+  has_many :mini_draft_picks
 
   validates :name, :code, presence: true
   validates :name, uniqueness: { case_sensitive: false }

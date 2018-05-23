@@ -1,0 +1,142 @@
+class MiniDraftPicks::Process < ApplicationInteraction
+  object :league, class: League
+  object :user, class: User
+  object :fpl_team_list, class: FplTeamList
+  object :list_position, class: ListPosition
+  object :in_player, class: Player
+
+  validate :round_is_current
+  validate :player_in_fpl_team
+  validate :mini_draft_pick_round
+  validate :fpl_team_turn
+  validate :maximum_number_of_players_from_team
+  validate :identical_player_and_target_positions
+  validate :target_unpicked
+  validate :player_in_fpl_team
+  validate :authorised_user
+  validate :no_consecutive_passes
+
+  run_in_transaction!
+
+  def execute
+    mini_draft_pick = MiniDraftPick.create(
+      fpl_team: fpl_team,
+      out_player: out_player,
+      in_player: in_player,
+      round: round,
+      league: league,
+      season: league_decorator.season,
+      pick_number: league_decorator.next_mini_draft_pick_number
+    )
+    errors.merge!(mini_draft_pick.errors) if mini_draft_pick.errors.any?
+
+    list_position.update(player: in_player)
+    errors.merge!(list_position.errors)
+
+
+    league.players.delete(out_player)
+    league.players << in_player
+    errors.merge!(league.errors)
+
+    fpl_team.players.delete(out_player)
+    fpl_team.players << in_player
+    errors.merge!(fpl_team.errors)
+
+
+    if league_decorator.consecutive_passes
+      MiniDraftPicks::Pass.run(
+        league: league,
+        fpl_team_list_id: league_decorator.current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round).id,
+        user: league_decorator.current_mini_draft_pick.fpl_team.user
+      )
+    end
+
+    MiniDraftPickBroadcastJob.perform_later(league,fpl_team_list, user, out_player, in_player, false)
+
+    mini_draft_pick
+  end
+
+  private
+
+  def round
+    fpl_team_list.round
+  end
+
+  def league_decorator
+    league.decorate
+  end
+
+  def season
+    league_decorator.season
+  end
+
+  def round_is_current
+    return if round == Round.current
+    errors.add(:base, "You can only make changes to your squad's line up for the upcoming round.")
+  end
+
+  def player_in_fpl_team
+    return if fpl_team.players.include?(out_player)
+    errors.add(:base, 'You can only trade out players that are part of your team.')
+  end
+
+  def mini_draft_pick_round
+    return if round.mini_draft
+    errors.add(:base, 'Mini draft picks cannot be performed at this time')
+  end
+
+  def mini_draft_pick_occurring_in_valid_period
+    if Time.now > round.deadline_time
+      errors.add(:base, 'The deadline time for making mini draft picks has passed.')
+    end
+  end
+
+  def fpl_team_turn
+    return if league_decorator.next_fpl_team == fpl_team
+    errors.add(:base, 'You cannot pick out of turn.')
+  end
+
+  def maximum_number_of_players_from_team
+    player_arr = fpl_team.players.to_a.delete_if { |player| player == out_player }
+    team_arr = player_arr.map(&:team_id)
+    team_arr << in_player.team_id
+    return if team_arr.count(in_player.team_id) <= FplTeam::QUOTAS[:team]
+    errors.add(
+      :base,
+      "You can't have more than #{FplTeam::QUOTAS[:team]} players from the same team (#{in_player.team.name})."
+    )
+  end
+
+  def identical_player_and_target_positions
+    return if out_player.position == in_player.position
+    errors.add(:base, 'You can only trade players that have the same positions.')
+  end
+
+  def authorised_user
+    return if fpl_team.user == user
+    errors.add(:base, 'You are not authorised to make changes to this team.')
+  end
+
+  def player_in_fpl_team
+    return if fpl_team.players.include?(out_player)
+    errors.add(:base, 'You can only trade out players that are part of your team.')
+  end
+
+  def target_unpicked
+    return unless in_player.leagues.include?(league)
+    errors.add(:base, 'The player you are trying to trade into your team is owned by another team in your league.')
+  end
+
+  def no_consecutive_passes
+    return unless league_decorator.consecutive_passes
+    errors.add(:base, 'You have already passed and will not be able to make any more mini draft picks.')
+  end
+
+  def fpl_team
+    fpl_team_list.fpl_team
+  end
+
+  def out_player
+    list_position.player
+  end
+end

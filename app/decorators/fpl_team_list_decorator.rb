@@ -238,7 +238,7 @@ class FplTeamListDecorator < ApplicationDecorator
   end
 
   def out_trade_groups
-    trade_groups = InterTeamTradeGroup.where(out_fpl_team_list_id: id).map do |tg|
+    trade_groups = InterTeamTradeGroup.where(out_fpl_team_list_id: id).order(:status).map do |tg|
       {
         id: tg.id,
         trades: tg.decorate.all_inter_team_trades,
@@ -255,10 +255,16 @@ class FplTeamListDecorator < ApplicationDecorator
     trade_groups = InterTeamTradeGroup
       .where(in_fpl_team_list_id: id)
       .where.not(status: 'pending')
+      .order(:status)
       .map do |tg|
-        { id: tg.id, trades: tg.decorate.all_inter_team_trades, status: tg.status, out_fpl_team: tg.out_fpl_team_list.fpl_team }
+        {
+          id: tg.id,
+          trades: tg.decorate.all_inter_team_trades,
+          status: tg.status,
+          out_fpl_team: tg.out_fpl_team_list.fpl_team,
+        }
       end
 
-      trade_groups.group_by { |tg| tg[:status] }
+    trade_groups.group_by { |tg| tg[:status] }
   end
 end

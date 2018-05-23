@@ -18,6 +18,7 @@ class FplTeam < ApplicationRecord
   belongs_to :user
   belongs_to :league
   has_many :draft_picks
+  has_many :mini_draft_picks
   has_and_belongs_to_many :players
   has_many :teams, through: :players
   has_many :fpl_team_lists

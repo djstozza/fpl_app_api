@@ -4,7 +4,7 @@ class PlayerDecorator < ApplicationDecorator
   end
 
   def players_hash
-    pluck_to_hash(
+    joins(:position).pluck_to_hash(
       :id,
       :first_name,
       :last_name,
@@ -50,6 +50,7 @@ class PlayerDecorator < ApplicationDecorator
       :offside,
       :position_id,
       :team_id,
+      :singular_name_short,
     ).map do |hash|
       hash['status'] = status_class_hash[hash['status'].to_sym]
       hash

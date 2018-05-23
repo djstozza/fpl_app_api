@@ -50,8 +50,6 @@ Rails.application.routes.draw do
       resources :inter_team_trade_groups, except: [:index], param: :inter_team_trade_group_id
       resources :inter_team_trades
 
-      resources :mini_draft_picks
-
       mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
         registrations: 'users/registrations',
       }
@@ -68,6 +66,9 @@ Rails.application.routes.draw do
       get '/fpl_teams/:fpl_team_id/out_players', to: 'out_players#index'
       get '/fpl_teams/:fpl_team_id/all_tradeable_players', to: 'all_tradeable_players#index'
       get '/fpl_teams/:fpl_team_id/inter_team_trade_groups', to: 'inter_team_trade_groups#index'
+      get '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#index'
+      post '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#create'
+      post '/leagues/:league_id/pass_mini_draft_picks', to: 'leagues/pass_mini_draft_picks#create'
     end
   end
 end
