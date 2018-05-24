@@ -11,7 +11,6 @@ class MiniDraftPicks::Broadcast < ApplicationInteraction
       fpl_team_list: fpl_team_list,
       list_positions: fpl_team_list.decorate.tradeable_players,
       info: info,
-      current_user: user,
     )
 
     ActionCable.server.broadcast("league_#{league.id}_mini_draft_picks", response_hash)
