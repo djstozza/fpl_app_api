@@ -7,9 +7,9 @@ class MiniDraftPicks::Broadcast < ApplicationInteraction
   boolean :passed, default: false
 
   def execute
-    response_hash = league.decorate.mini_draft_response_hash.merge(
-      fpl_team_list: fpl_team_list,
-      list_positions: fpl_team_list.decorate.tradeable_players,
+    return if league_decorator.consecutive_passes
+
+    response_hash = league_decorator.mini_draft_response_hash.merge(
       info: info,
     )
 
@@ -19,8 +19,6 @@ class MiniDraftPicks::Broadcast < ApplicationInteraction
   private
 
   def info
-    return if league_decorator.consecutive_passes
-
     if passed
       "#{user.username} has passed."
     else

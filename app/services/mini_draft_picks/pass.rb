@@ -18,14 +18,14 @@ class MiniDraftPicks::Pass < ApplicationInteraction
     )
     errors.merge!(outcome.errors) if outcome.errors.any?
 
-    MiniDraftPickBroadcastJob.perform_later(league,fpl_team_list, user, nil, nil, true)
-
     if league_decorator.consecutive_passes
       self.class.run(
         league: league,
         fpl_team_list_id: league_decorator.current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round).id,
         user: league_decorator.current_mini_draft_pick.fpl_team.user
       )
+    else
+      MiniDraftPickBroadcastJob.perform_later(league,fpl_team_list, user, nil, nil, true)
     end
   end
 

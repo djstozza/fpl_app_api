@@ -9,7 +9,7 @@ class Api::V1::Leagues::PassMiniDraftPicksController < ApplicationController
 
     response_hash = league.decorate.mini_draft_response_hash.merge(
       fpl_team_list: fpl_team_list,
-      list_positions: fpl_team_list.tradeable_players,
+      out_players: fpl_team_list.tradeable_players,
       current_user: current_api_v1_user,
     )
 

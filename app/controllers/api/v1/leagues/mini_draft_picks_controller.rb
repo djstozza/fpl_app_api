@@ -6,7 +6,7 @@ class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
   def index
     response_hash = @league.mini_draft_response_hash.merge(
       fpl_team_list: @fpl_team_list,
-      list_positions: @fpl_team_list.tradeable_players,
+      out_players: @fpl_team_list.tradeable_players,
       current_user: current_api_v1_user,
     )
 
@@ -18,18 +18,17 @@ class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
 
     response_hash = @league.mini_draft_response_hash.merge(
       fpl_team_list: @fpl_team_list,
-      list_positions: @fpl_team_list.tradeable_players,
+      out_players: @fpl_team_list.tradeable_players,
       current_user: current_api_v1_user,
     )
 
     if outcome.valid?
-      response_hash.merge(
-        success: "You have successfully traded out #{outcome.result.out_player.decorate.name} for " \
-                   "#{outcome.result.in_player.decorate.name} in the mini draft."
-      )
+      response_hash[:success] =
+        "You have successfully traded out #{outcome.result.out_player.decorate.name} for " \
+          "#{outcome.result.in_player.decorate.name} in the mini draft."
       render json: response_hash
     else
-      response_hash.merge(error: outcome.errors)
+      response_hash[:error] =  outcome.errors
       render json: response_hash, status: :unprocessable_entity
     end
   end

@@ -23,7 +23,7 @@ class MiniDraftPick < ApplicationRecord
   belongs_to :round
   validates :league_id, :fpl_team_id, :season, presence: true
   validates :in_player, :out_player, :pick_number, presence: true, if: '!passed'
-  delegate :user, to: :fpl_team
+
   enum season: %w[summer winter]
 
   scope :completed, -> { where('passed IS TRUE OR (in_player_id IS NOT NULL AND out_player_id IS NOT NULL)') }

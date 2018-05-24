@@ -30,10 +30,6 @@ class MiniDraftPicks::Process < ApplicationInteraction
     )
     errors.merge!(mini_draft_pick.errors) if mini_draft_pick.errors.any?
 
-    list_position.update(player: in_player)
-    errors.merge!(list_position.errors)
-
-
     league.players.delete(out_player)
     league.players << in_player
     errors.merge!(league.errors)
@@ -42,6 +38,8 @@ class MiniDraftPicks::Process < ApplicationInteraction
     fpl_team.players << in_player
     errors.merge!(fpl_team.errors)
 
+    list_position.update(player: in_player)
+    errors.merge!(list_position.errors)
 
     if league_decorator.consecutive_passes
       MiniDraftPicks::Pass.run(

@@ -91,7 +91,7 @@ class LeagueDecorator < ApplicationDecorator
       fpl_teams: fpl_teams.order(:name),
       mini_draft_picks: all_non_passed_mini_draft_picks,
       current_mini_draft_pick: current_mini_draft_pick,
-      current_mini_draft_pick_user: current_mini_draft_pick&.user,
+      current_mini_draft_pick_user: current_mini_draft_pick&.fpl_team&.user,
       unpicked_players: unpicked_players,
     }
   end
@@ -153,6 +153,6 @@ class LeagueDecorator < ApplicationDecorator
   end
 
   def last_mini_draft_picks
-    next_fpl_team&.mini_draft_picks&.public_send(season)&.last(2)
+    next_fpl_team&.mini_draft_picks&.public_send(season)&.order(:pick_number)&.last(2)
   end
 end
