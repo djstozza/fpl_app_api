@@ -27,11 +27,11 @@ class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
         success: "You have successfully traded out #{outcome.result.out_player.decorate.name} for " \
                    "#{outcome.result.in_player.decorate.name} in the mini draft."
       )
+      render json: response_hash
     else
       response_hash.merge(error: outcome.errors)
+      render json: response_hash, status: :unprocessable_entity
     end
-
-    render json: response_hash
   end
 
 
