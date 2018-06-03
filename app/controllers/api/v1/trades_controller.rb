@@ -3,24 +3,14 @@ class Api::V1::TradesController < ApplicationController
 
   def create
     outcome = ::FplTeamLists::ProcessTrade.run(permitted_params.merge(user: current_api_v1_user))
-    fpl_team_list = outcome.fpl_team_list.decorate
+
+    fpl_team_list_hash = outcome.fpl_team_list_hash
 
     if outcome.valid?
-      render json: {
-        fpl_team_list: fpl_team_list,
-        status: fpl_team_list.status,
-        list_positions: fpl_team_list.list_position_arr,
-        grouped_list_positions: fpl_team_list.grouped_list_position_arr,
-        success: "Trade successful - Out: #{outcome.out_player.decorate.name} In: #{outcome.in_player.decorate.name}",
-      }
+      message = "Trade successful - Out: #{outcome.out_player.decorate.name} In: #{outcome.in_player.decorate.name}"
+      render json:  fpl_team_list_hash.merge!(success: message)
     else
-      render json: {
-        fpl_team_list: fpl_team_list,
-        status: fpl_team_list.status,
-        list_positions: fpl_team_list.list_position_arr,
-        grouped_list_positions: fpl_team_list.grouped_list_position_arr,
-        error: outcome.errors
-      }, status: :unprocessable_entity
+      render json: fpl_team_list_hash.merge!(error: outcome.errors), status: :unprocessable_entity
     end
   end
 

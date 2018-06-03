@@ -23,8 +23,16 @@ class FplTeamLists::ProcessSubstitution < ApplicationInteraction
 
     substitute_list_position.update(role: role)
     errors.merge!(substitute_list_position.errors)
+  end
 
-    fpl_team_list
+  def fpl_team_list_hash
+    FplTeamLists::FplTeamListHash.run(
+      fpl_team_list: fpl_team_list,
+      user: user,
+      show_list_positions: true,
+      show_waiver_picks: true,
+      user_owns_fpl_team: fpl_team.user == user,
+    ).result
   end
 
 

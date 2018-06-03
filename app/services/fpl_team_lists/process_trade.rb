@@ -32,6 +32,16 @@ class FplTeamLists::ProcessTrade < ApplicationInteraction
     errors.merge!(list_position.errors)
   end
 
+  def fpl_team_list_hash
+    FplTeamLists::FplTeamListHash.run(
+      fpl_team_list: fpl_team_list,
+      user: user,
+      show_list_positions: true,
+      show_waiver_picks: true,
+      user_owns_fpl_team: fpl_team.user == user,
+    ).result
+  end
+
   private
 
   def authorised_user

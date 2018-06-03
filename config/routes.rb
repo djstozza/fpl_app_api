@@ -35,9 +35,8 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :fpl_teams, except: [:create, :destroy] do
-        resources :fpl_team_lists, param: :fpl_team_list_id, only: [:index, :show, :update]
-      end
+      resources :fpl_teams, except: [:create, :destroy]
+      resources :fpl_team_lists, param: :fpl_team_list_id, only: [:show]
 
       resources :list_positions, param: :list_position_id, only: [:show, :update]
 
@@ -57,7 +56,6 @@ Rails.application.routes.draw do
       put '/leagues/:league_id/generate_pick_numbers', to: 'leagues/generate_pick_numbers#update'
       post '/leagues/:league_id/create_draft', to: 'leagues/create_draft#create'
 
-      get '/fpl_teams/:fpl_team_id/waiver_picks', to: 'fpl_teams/waiver_picks#index'
       post '/fpl_team_lists/:fpl_team_list_id/waiver_picks', to: 'fpl_team_lists/waiver_picks#create'
       put '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
       delete '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id',
@@ -69,6 +67,7 @@ Rails.application.routes.draw do
       get '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#index'
       post '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#create'
       post '/leagues/:league_id/pass_mini_draft_picks', to: 'leagues/pass_mini_draft_picks#create'
+      get '/fpl_team_lists/:fpl_team_list_id/tradeable_players', to: 'fpl_team_lists/tradeable_players#index'
     end
   end
 end

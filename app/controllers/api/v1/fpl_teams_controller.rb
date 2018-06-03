@@ -8,16 +8,8 @@ class Api::V1::FplTeamsController < ApplicationController
   end
 
   def show
-    fpl_team_list = @fpl_team.fpl_team_lists.find_by(round: Round.current)&.decorate
-
-    render json: {
-      fpl_team: @fpl_team,
-      fpl_team_list: fpl_team_list,
-      status: fpl_team_list&.status,
-      current_user: current_api_v1_user,
-      user_owns_fpl_team: @fpl_team.user == current_api_v1_user,
-      league_status: @fpl_team.league.status
-    }
+    outcome = FplTeams::FplTeamHash.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
+    render json: outcome.result
   end
 
   def update
@@ -41,6 +33,6 @@ class Api::V1::FplTeamsController < ApplicationController
   end
 
   def permitted_params
-    params.permit(:id, :name)
+    params.permit(:id, :name, :show_waiver_picks, :show_trade_groups, :show_list_positions)
   end
 end
