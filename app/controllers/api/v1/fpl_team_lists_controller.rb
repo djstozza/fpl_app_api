@@ -2,7 +2,7 @@ class Api::V1::FplTeamListsController < ApplicationController
   before_action :authenticate_api_v1_user!
 
   def show
-    render json: ::FplTeamLists::FplTeamListHash.run(permitted_params.merge(user: current_api_v1_user)).result
+    render json: ::FplTeamLists::Hash.run(permitted_params.merge(user: current_api_v1_user)).result
   end
 
   private

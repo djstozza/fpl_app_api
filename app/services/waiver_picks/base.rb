@@ -14,6 +14,15 @@ class WaiverPicks::Base < ApplicationInteraction
 
   run_in_transaction!
 
+  def fpl_team_list_hash
+    FplTeamLists::Hash.run(
+      fpl_team_list: fpl_team_list,
+      user: user,
+      show_waiver_picks: true,
+      user_owns_fpl_team: fpl_team.user == user,
+    ).result
+  end
+
   private
 
   def authorised_user

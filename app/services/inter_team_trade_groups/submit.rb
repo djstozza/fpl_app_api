@@ -1,5 +1,4 @@
 class InterTeamTradeGroups::Submit < InterTeamTradeGroups::Base
-  object :user, class: User
   object :inter_team_trade_group, class: InterTeamTradeGroup
 
   validate :authorised_user_out_fpl_team

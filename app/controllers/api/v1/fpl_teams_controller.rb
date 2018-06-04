@@ -8,7 +8,7 @@ class Api::V1::FplTeamsController < ApplicationController
   end
 
   def show
-    outcome = FplTeams::FplTeamHash.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
+    outcome = FplTeams::Hash.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
     render json: outcome.result
   end
 

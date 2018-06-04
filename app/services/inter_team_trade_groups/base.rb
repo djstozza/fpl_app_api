@@ -1,4 +1,9 @@
 class InterTeamTradeGroups::Base < ApplicationInteraction
+  object :fpl_team_list, class: FplTeamList
+  object :user, class: User
+
+  delegate :fpl_team, to: :fpl_team_list
+
   validate :round_is_current
   attr_reader :success_message
 
@@ -10,6 +15,15 @@ class InterTeamTradeGroups::Base < ApplicationInteraction
 
   def out_player
     out_list_position.player
+  end
+
+  def fpl_team_list_hash
+    FplTeamLists::Hash.run(
+      fpl_team_list: fpl_team_list,
+      user: user,
+      show_trade_groups: true,
+      user_owns_fpl_team: fpl_team.user == user,
+    ).result
   end
 
   private

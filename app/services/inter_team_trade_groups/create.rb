@@ -1,5 +1,4 @@
 class InterTeamTradeGroups::Create < InterTeamTradeGroups::Base
-  object :user, class: User
   object :out_list_position, class: ListPosition
   object :in_list_position, class: ListPosition
 

@@ -46,8 +46,7 @@ Rails.application.routes.draw do
 
       resources :trades, only: [:create]
 
-      resources :inter_team_trade_groups, except: [:index], param: :inter_team_trade_group_id
-      resources :inter_team_trades
+      resources :inter_team_trade_groups, only: [:create, :update], param: :inter_team_trade_group_id
 
       mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
         registrations: 'users/registrations',

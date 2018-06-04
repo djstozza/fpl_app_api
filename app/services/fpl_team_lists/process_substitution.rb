@@ -26,7 +26,7 @@ class FplTeamLists::ProcessSubstitution < ApplicationInteraction
   end
 
   def fpl_team_list_hash
-    FplTeamLists::FplTeamListHash.run(
+    FplTeamLists::Hash.run(
       fpl_team_list: fpl_team_list,
       user: user,
       show_list_positions: true,

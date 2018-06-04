@@ -1,5 +1,4 @@
 class InterTeamTradeGroups::RemoveFromTradeGroup < InterTeamTradeGroups::Base
-  object :user, class: User
   object :inter_team_trade_group, class: InterTeamTradeGroup
   object :inter_team_trade, class: InterTeamTrade
 
