@@ -60,8 +60,6 @@ Rails.application.routes.draw do
       delete '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id',
         to: 'fpl_team_lists/waiver_picks#destroy'
 
-      get '/fpl_teams/:fpl_team_id/out_players', to: 'out_players#index'
-      get '/fpl_teams/:fpl_team_id/all_tradeable_players', to: 'all_tradeable_players#index'
       get '/fpl_teams/:fpl_team_id/inter_team_trade_groups', to: 'inter_team_trade_groups#index'
       get '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#index'
       post '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#create'
