@@ -1,4 +1,4 @@
-class Leagues::ProcessRankingService < ActiveInteraction::Base
+class Leagues::Rank < ActiveInteraction::Base
   object :league, class: League
   object :round, class: Round
 

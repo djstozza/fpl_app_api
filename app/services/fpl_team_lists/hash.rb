@@ -166,25 +166,28 @@ class FplTeamLists::Hash < ApplicationInteraction
       )
       .each_with_index.map do |hash, i|
         hash['i'] = i
+        fixture_hash_attributes(hash) if hash['fixture_id']
 
-        fixture_points_bonus_calculator(hash) if hash['fixture_points']
-
-        hash['leg'] = hash['home'] ? 'H' : 'A'
-
-        hash['fixture'] = "#{hash['opponent_short_name']} (#{hash['leg']})"
-
-        hash['advantage'] =
-          if hash['home']
-            hash['team_a_difficulty'] - hash['team_h_difficulty']
-          else
-            hash['team_h_difficulty'] - hash['team_a_difficulty']
-          end
+        hash['fixture'] = hash['fixture_id'] ? "#{hash['opponent_short_name']} (#{hash['leg']})" : 'BYE'
 
         hash['role'] = hash['role'].gsub(/tarting|ubstitute_/, '').upcase
 
         hash['status'] = status_class_hash[hash['status'].to_sym]
 
         hash
+      end
+  end
+
+  def fixture_hash_attributes(hash)
+    fixture_points_bonus_calculator(hash) if hash['fixture_points']
+
+    hash['leg'] = hash['home'] ? 'H' : 'A'
+
+    hash['advantage'] =
+      if hash['home']
+        hash['team_a_difficulty'] - hash['team_h_difficulty']
+      else
+        hash['team_h_difficulty'] - hash['team_a_difficulty']
       end
   end
 

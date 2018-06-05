@@ -5,7 +5,7 @@ class Leagues::Score < ActiveInteraction::Base
   def execute
     ActiveRecord::Base.transaction do
       league.fpl_teams.each do |fpl_team|
-        FplTeams::Score.run(fpl_team: fpl_team)
+        FplTeams::Score.run(fpl_team: fpl_team, round: round)
       end
     end
   end
