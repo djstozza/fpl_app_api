@@ -10,6 +10,17 @@ class FplTeams::Score < ApplicationInteraction
     process_goalkeeper_substitution
     fpl_team_list.update(total_score: score)
     fpl_team.update(total_score: fpl_team_lists.pluck(:total_score).inject(0) { |sum, x| sum + x })
+
+    ActionCable.server.broadcast(
+      "fpl_team_#{fpl_team.id}",
+      FplTeams::Hash.run(
+        fpl_team: fpl_team,
+        fpl_team_list: fpl_team_list,
+        user: fpl_team.user,
+        show_list_positions: true,
+        show_waiver_picks: true,
+      ).result,
+    )
   end
 
   def list_positions
@@ -115,6 +126,6 @@ class FplTeams::Score < ApplicationInteraction
   end
 
   def score
-    fixture_points_arr.inject(0) { |sum, hash| sum + hash['fixture_points'] if hash['fixture_points'] }
+    fixture_points_arr.inject(0) { |sum, hash| hash['fixture_points'].present? ? sum + hash['fixture_points'] : sum }
   end
 end
