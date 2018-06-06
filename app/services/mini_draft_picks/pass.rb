@@ -12,21 +12,25 @@ class MiniDraftPicks::Pass < ApplicationInteraction
       fpl_team: fpl_team,
       round: round,
       league: league,
-      season: league_decorator.season,
-      pick_number: league_decorator.next_mini_draft_pick_number,
+      season: season,
+      pick_number: mini_draft_pick_hash[:next_mini_draft_pick_number],
       passed: true
     )
     errors.merge!(outcome.errors) if outcome.errors.any?
 
-    if league_decorator.consecutive_passes
+    if mini_draft_pick_hash[:consecutive_passes]
       self.class.run(
         league: league,
-        fpl_team_list_id: league_decorator.current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round).id,
-        user: league_decorator.current_mini_draft_pick.fpl_team.user
+        fpl_team_list: current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round),
+        user: current_mini_draft_pick.fpl_team.user
       )
     else
       MiniDraftPickBroadcastJob.perform_later(league,fpl_team_list, user, nil, nil, true)
     end
+  end
+
+  def mini_draft_pick_hash
+    MiniDraftPicks::Hash.run(league: league, fpl_team_list: fpl_team_list, user: user).result
   end
 
   private
@@ -37,6 +41,10 @@ class MiniDraftPicks::Pass < ApplicationInteraction
 
   def round
     fpl_team_list.round
+  end
+
+  def current_mini_draft_pick
+    mini_draft_pick_hash[:current_mini_draft_pick]
   end
 
   def round_is_current
@@ -56,7 +64,7 @@ class MiniDraftPicks::Pass < ApplicationInteraction
   end
 
   def fpl_team_turn
-    return if league_decorator.next_fpl_team == fpl_team
+    return if mini_draft_pick_hash[:next_fpl_team] == fpl_team
     errors.add(:base, 'You pass out of turn.')
   end
 
@@ -65,12 +73,8 @@ class MiniDraftPicks::Pass < ApplicationInteraction
     errors.add(:base, 'You are not authorised to make changes to this team.')
   end
 
-  def league_decorator
-    league.decorate
-  end
-
   def season
-    league_decorator.season
+    mini_draft_pick_hash[:season]
   end
 
   def fpl_team

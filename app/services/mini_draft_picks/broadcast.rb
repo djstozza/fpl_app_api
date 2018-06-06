@@ -7,13 +7,9 @@ class MiniDraftPicks::Broadcast < ApplicationInteraction
   boolean :passed, default: false
 
   def execute
-    return if league_decorator.consecutive_passes
+    return if mini_draft_pick_hash[:consecutive_passes]
 
-    response_hash = league_decorator.mini_draft_response_hash.merge(
-      info: info,
-    )
-
-    ActionCable.server.broadcast("league_#{league.id}_mini_draft_picks", response_hash)
+    ActionCable.server.broadcast("league_#{league.id}_mini_draft_picks", mini_draft_pick_hash.merge!(info: info))
   end
 
   private
@@ -26,7 +22,7 @@ class MiniDraftPicks::Broadcast < ApplicationInteraction
     end
   end
 
-  def league_decorator
-    league.decorate
+  def mini_draft_pick_hash
+    MiniDraftPicks::Hash.run(league: league).result
   end
 end

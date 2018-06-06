@@ -25,10 +25,10 @@ class MiniDraftPicks::Process < ApplicationInteraction
       in_player: in_player,
       round: round,
       league: league,
-      season: league_decorator.season,
-      pick_number: league_decorator.next_mini_draft_pick_number
+      season: season,
+      pick_number: mini_draft_pick_hash[:next_mini_draft_pick_number]
     )
-    errors.merge!(mini_draft_pick.errors) if mini_draft_pick.errors.any?
+    errors.merge!(mini_draft_pick.errors)
 
     league.players.delete(out_player)
     league.players << in_player
@@ -41,31 +41,39 @@ class MiniDraftPicks::Process < ApplicationInteraction
     list_position.update(player: in_player)
     errors.merge!(list_position.errors)
 
-    if league_decorator.consecutive_passes
+    if consecutive_passes && current_mini_draft_pick.present?
       MiniDraftPicks::Pass.run(
         league: league,
-        fpl_team_list_id: league_decorator.current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round).id,
-        user: league_decorator.current_mini_draft_pick.fpl_team.user
+        fpl_team_list: current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round),
+        user: current_mini_draft_pick.fpl_team.user
       )
     end
 
-    MiniDraftPickBroadcastJob.perform_later(league,fpl_team_list, user, out_player, in_player, false)
+    MiniDraftPickBroadcastJob.perform_later(league, fpl_team_list, user, out_player, in_player, false)
 
     mini_draft_pick
   end
 
+  def mini_draft_pick_hash
+    MiniDraftPicks::Hash.run(league: league, fpl_team_list: fpl_team_list, user: user).result
+  end
+
   private
+
+  def consecutive_passes
+    mini_draft_pick_hash[:consecutive_passes]
+  end
 
   def round
     fpl_team_list.round
   end
 
-  def league_decorator
-    league.decorate
+  def season
+    mini_draft_pick_hash[:season]
   end
 
-  def season
-    league_decorator.season
+  def current_mini_draft_pick
+    mini_draft_pick_hash[:current_mini_draft_pick]
   end
 
   def round_is_current
@@ -90,7 +98,7 @@ class MiniDraftPicks::Process < ApplicationInteraction
   end
 
   def fpl_team_turn
-    return if league_decorator.next_fpl_team == fpl_team
+    return if mini_draft_pick_hash[:next_fpl_team] == fpl_team
     errors.add(:base, 'You cannot pick out of turn.')
   end
 
@@ -126,7 +134,7 @@ class MiniDraftPicks::Process < ApplicationInteraction
   end
 
   def no_consecutive_passes
-    return unless league_decorator.consecutive_passes
+    return unless consecutive_passes
     errors.add(:base, 'You have already passed and will not be able to make any more mini draft picks.')
   end
 

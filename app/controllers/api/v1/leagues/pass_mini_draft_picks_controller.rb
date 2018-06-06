@@ -4,22 +4,15 @@ class Api::V1::Leagues::PassMiniDraftPicksController < ApplicationController
   def create
     outcome = MiniDraftPicks::Pass.run(permitted_params.merge(user: current_api_v1_user))
 
-    league = outcome.league.decorate
-    fpl_team_list = outcome.fpl_team_list.decorate
-
-    response_hash = league.decorate.mini_draft_response_hash.merge(
-      fpl_team_list: fpl_team_list,
-      out_players: fpl_team_list.tradeable_players,
-      current_user: current_api_v1_user,
-    )
+    mini_draft_pick_hash = outcome.mini_draft_pick_hash
 
     if outcome.valid?
-      response_hash[:success] = 'You have successfully passed'
+      mini_draft_pick_hash[:success] = 'You have successfully passed'
+      render json: mini_draft_pick_hash
     else
-      response_hash[:error] = outcome.errors
+      mini_draft_pick_hash[:error] = outcome.errors
+      render json: mini_draft_pick_hash, status: :unprocessable_entity
     end
-
-    render json: response_hash
   end
 
   private

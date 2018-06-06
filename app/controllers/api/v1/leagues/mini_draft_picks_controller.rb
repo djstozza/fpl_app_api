@@ -1,35 +1,25 @@
 class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
   before_action :authenticate_api_v1_user!
   before_action :set_league
-  before_action :set_fpl_team_list
+  before_action :set_fpl_team_list, only: [:index]
 
   def index
-    response_hash = @league.mini_draft_response_hash.merge(
-      fpl_team_list: @fpl_team_list,
-      out_players: @fpl_team_list.tradeable_players,
-      current_user: current_api_v1_user,
-    )
-
-    render json: response_hash
+    render json: MiniDraftPicks::Hash.run(permitted_params.merge(fpl_team_list: @fpl_team_list, user: current_api_v1_user)).result
   end
 
   def create
     outcome = MiniDraftPicks::Process.run(permitted_params.merge(user: current_api_v1_user))
 
-    response_hash = @league.mini_draft_response_hash.merge(
-      fpl_team_list: @fpl_team_list,
-      out_players: @fpl_team_list.tradeable_players,
-      current_user: current_api_v1_user,
-    )
+    mini_draft_pick_hash = outcome.mini_draft_pick_hash
 
     if outcome.valid?
-      response_hash[:success] =
+      mini_draft_pick_hash[:success] =
         "You have successfully traded out #{outcome.result.out_player.decorate.name} for " \
           "#{outcome.result.in_player.decorate.name} in the mini draft."
-      render json: response_hash
+      render json: mini_draft_pick_hash
     else
-      response_hash[:error] =  outcome.errors
-      render json: response_hash, status: :unprocessable_entity
+      mini_draft_pick_hash[:error] = outcome.errors
+      render json: mini_draft_pick_hash, status: :unprocessable_entity
     end
   end
 
@@ -52,7 +42,6 @@ class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
           user_id: current_api_v1_user.id,
           id: permitted_params[:fpl_team_list_id],
         )
-        .decorate
   end
 
   def permitted_params
