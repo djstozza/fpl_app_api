@@ -31,6 +31,16 @@ class InterTeamTradeGroups::Approve < InterTeamTradeGroups::Base
     errors.merge!(out_fpl_team_list.errors)
     errors.merge!(in_fpl_team_list.errors)
 
-    'You have successfully approved the trade. All players players involved have been exchanged.'
+    halt_if_errors!
+
+    FplTeamTradeBroadcastJob.perform_later(
+      fpl_team_list: out_fpl_team_list,
+      fpl_team: out_fpl_team,
+      user: out_fpl_team.user,
+      round: round,
+      show_trade_groups: true,
+    )
+
+    'You have successfully approved the trade. All players involved have been exchanged.'
   end
 end
