@@ -8,7 +8,7 @@ class FplTeamLists::Hash < ApplicationInteraction
 
   validate :authorised_user, if: :show_trade_groups
 
-  delegate :list_positions, to: :fpl_team_list
+  delegate :list_positions, :fpl_team, to: :fpl_team_list
 
   def execute
     fpl_team_list_hash
@@ -35,7 +35,7 @@ class FplTeamLists::Hash < ApplicationInteraction
   end
 
   def user_owns_fpl_team
-    fpl_team_list.fpl_team.user == user
+    fpl_team.user == user
   end
 
   def tradeable_players(player_ids: [])
@@ -87,7 +87,7 @@ class FplTeamLists::Hash < ApplicationInteraction
         'JOIN list_positions ON list_positions.player_id = players.id AND ' \
         'list_positions.fpl_team_list_id = fpl_team_lists.id'
       )
-      .where(leagues: { id: fpl_team_list.fpl_team.league_id }, fpl_team_lists: { round_id: fpl_team_list.round_id })
+      .where(leagues: { id: fpl_team.league_id }, fpl_team_lists: { round_id: fpl_team_list.round_id })
       .where.not(fpl_team_lists: { id: fpl_team_list.id })
       .pluck_to_hash(
         :id,

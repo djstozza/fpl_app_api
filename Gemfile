@@ -8,27 +8,30 @@ end
 ruby '~> 2.4.2'
 gem 'rails_12factor', group: :production
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.4'
+gem 'rails', '~> 5.1.6'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 gem 'redis'
 gem 'redis-rails'
-gem 'sidekiq'
-gem 'sidekiq-scheduler'
-gem 'rufus-scheduler', '3.2.2'
+
 gem 'figaro'
 gem 'responders'
 gem 'httparty'
 gem 'fast_jsonapi'
-gem 'active_interaction'
+
 gem 'pluck_to_hash'
 gem 'nilify_blanks'
 gem 'devise_token_auth'
 gem 'omniauth'
 gem 'rack-attack'
-gem 'active_interaction-active_job'
+gem 'active_interaction'
+gem 'active_interaction-extras'
+
+gem 'sidekiq'
+gem 'sidekiq-scheduler'
+gem 'rufus-scheduler', '3.2.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production

@@ -1,7 +1,5 @@
 class ScoringWorker < ApplicationInteraction
-  job do
-    sidekiq_options retry: 2
-  end
+
 
   def execute
     round = Round.find_by(is_current: true)
