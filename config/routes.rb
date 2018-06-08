@@ -23,7 +23,7 @@ Rails.application.routes.draw do
                   param: :draft_pick_id,
                   controller: 'leagues/draft_picks'
 
-        resources :fpl_teams, only: [:update], param: :fpl_team_id, controller: 'leagues/fpl_teams'
+        resources :fpl_teams, only: [:index, :update], param: :fpl_team_id, controller: 'leagues/fpl_teams'
         resources :unpicked_players, only: [:index], controller: 'leagues/unpicked_players'
 
         member do

@@ -1,5 +1,14 @@
 class Api::V1::Leagues::FplTeamsController < ApplicationController
-  before_action :authenticate_api_v1_user!
+  before_action :authenticate_api_v1_user!, except: [:index]
+
+  def index
+    fpl_teams =
+      FplTeam
+        .where(league_id: permitted_params[:league_id])
+        .where.not(id: permitted_params[:fpl_team_id])
+        .order(:name)
+    render json: { fpl_teams: fpl_teams }
+  end
 
   # PUT /leagues/:id/fpl_teams/:fpl_team_id.json
   def update
