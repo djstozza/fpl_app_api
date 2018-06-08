@@ -11,7 +11,7 @@ class InterTeamTradeGroups::Decline < InterTeamTradeGroups::Base
 
     halt_if_errors!
 
-    FplTeamTradeBroadcastJob.perform_later(
+    FplTeams::Broadcast.delay.run(
       fpl_team_list: out_fpl_team_list,
       fpl_team: out_fpl_team,
       user: out_fpl_team.user,

@@ -49,7 +49,13 @@ class MiniDraftPicks::Process < ApplicationInteraction
       )
     end
 
-    MiniDraftPickBroadcastJob.perform_later(league, fpl_team_list, user, out_player, in_player, false)
+    MiniDraftPicks::Broadcast.delay.run(
+      league: league,
+      fpl_team_list: fpl_team_list,
+      user: user,
+      out_player: out_player,
+      in_player: in_player,
+    )
 
     mini_draft_pick
   end

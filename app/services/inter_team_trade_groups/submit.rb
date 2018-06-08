@@ -12,7 +12,7 @@ class InterTeamTradeGroups::Submit < InterTeamTradeGroups::Base
 
     halt_if_errors!
 
-    FplTeamTradeBroadcastJob.perform_later(
+    FplTeams::Broadcast.delay.run(
       fpl_team_list: in_fpl_team_list,
       fpl_team: in_fpl_team,
       user: in_fpl_team.user,

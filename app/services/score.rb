@@ -1,6 +1,4 @@
-class ScoringWorker < ApplicationInteraction
-
-
+class Score < ApplicationInteraction
   def execute
     round = Round.find_by(is_current: true)
     next_round = Round.find_by(is_next: true)

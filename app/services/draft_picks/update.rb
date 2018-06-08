@@ -21,7 +21,7 @@ class DraftPicks::Update < ApplicationInteraction
 
     outcome = Leagues::Activate.run(league: league)
     errors.merge!(outcome.errors)
-    DraftPickBroadcastJob.perform_later(league, user, player, mini_draft)
+    DraftPicks::Broadcast.delay.run(league: league, user: user, player: player, mini_draft: mini_draft)
 
     league
   end

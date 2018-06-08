@@ -92,7 +92,7 @@ class FplTeams::Score < ApplicationInteraction
   def valid_substitution(list_position, substitute)
     return if substitute.starting? && !list_position.starting?
 
-    arr = counted_starting_field_positions.pluck_to_hash(:singular_name_short, :id).uniq
+    arr = starting_field_positions.where.not(id: list_position.id).pluck_to_hash(:singular_name_short, :id).uniq
     arr << { singular_name_short: substitute.position.singular_name_short, id: substitute.id }
     arr = arr.pluck(:singular_name_short)
 
