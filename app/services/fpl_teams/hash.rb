@@ -25,8 +25,12 @@ class FplTeams::Hash < ApplicationInteraction
       user_owns_fpl_team: user_owns_fpl_team,
     )
     errors.merge!(fpl_team_list_hash.errors)
-
-    fpl_team_hash = base_hash.merge(fpl_team_list_hash.result)
+    fpl_team_hash =
+      if fpl_team_list_hash.valid?
+        base_hash.merge(fpl_team_list_hash.result)
+      else
+        base_hash
+      end
     fpl_team_hash
   end
 

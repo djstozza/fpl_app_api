@@ -13,9 +13,12 @@ class Api::V1::FplTeamsController < ApplicationController
   end
 
   def update
-    outcome = FplTeams::UpdateForm.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
+    outcome =
+      FplTeams::UpdateForm.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
+
     fpl_team = outcome.result || outcome.fpl_team
     result_hash = { fpl_team: fpl_team, current_user: current_api_v1_user }
+
     if outcome.valid?
       result_hash[:success] = 'Fpl team successfully updated.'
       render json: result_hash
