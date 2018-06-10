@@ -4,7 +4,7 @@ class Fixtures::Populate < ApplicationInteraction
 
   def execute
     response.each do |fixture_json|
-      fixture = Fixture.find_or_create_by(code: fixture_json['code'])
+      fixture = Fixture.find_or_create_by(id: fixture_json['id'])
 
       fixture.update(
         kickoff_time: fixture_json['kickoff_time'],
@@ -21,7 +21,8 @@ class Fixtures::Populate < ApplicationInteraction
         finished: fixture_json['finished'],
         provisional_start_time: fixture_json['provisional_start_time'],
         finished_provisional: fixture_json['finished_provisional'],
-        round_day: fixture_json['event_day']
+        round_day: fixture_json['event_day'],
+        code: fixture_json['code'],
       )
 
       next unless fixture.started
