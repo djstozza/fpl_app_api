@@ -226,18 +226,19 @@ class FplTeamLists::Hash < ApplicationInteraction
   end
 
   def editable
-    (status == 'mini_draft' ||  status == 'waiver' ||  status == 'trade') && user_owns_fpl_team
+    (status == 'mini_draft' ||  status == 'waiver' || status == 'trade') && user_owns_fpl_team
   end
 
   def out_trade_groups
-    trade_groups = InterTeamTradeGroup.where(out_fpl_team_list_id: fpl_team_list&.id).order(:status).map do |tg|
-      {
-        id: tg.id,
-        trades: tg.decorate.all_inter_team_trades,
-        status: tg.status,
-        in_fpl_team: tg.in_fpl_team_list.fpl_team,
-      }
-    end
+    trade_groups =
+      InterTeamTradeGroup.where(out_fpl_team_list_id: fpl_team_list&.id).order(:status).map do |tg|
+        {
+          id: tg.id,
+          trades: tg.decorate.all_inter_team_trades,
+          status: tg.status,
+          in_fpl_team: tg.in_fpl_team_list.fpl_team,
+        }
+      end
 
     trade_groups.group_by { |tg| tg[:status] }
   end
@@ -311,6 +312,6 @@ class FplTeamLists::Hash < ApplicationInteraction
 
   def authorised_user
     return if user_owns_fpl_team
-    errors.add(:unauthorized, 'You are not authorised to visit this page.')
+    errors.add(:base, 'You are not authorised to visit this page.')
   end
 end

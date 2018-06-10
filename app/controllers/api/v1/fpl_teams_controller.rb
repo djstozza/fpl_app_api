@@ -9,7 +9,11 @@ class Api::V1::FplTeamsController < ApplicationController
 
   def show
     outcome = FplTeams::Hash.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
-    render json: outcome.result
+    if outcome.valid?
+      render json: outcome.result
+    else
+      render json: outcome.hash.merge(error: outcome.errors), status: :unprocessable_entity
+    end
   end
 
   def update
