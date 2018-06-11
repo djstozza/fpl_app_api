@@ -19,6 +19,7 @@ class FplTeamLists::Hash < ApplicationInteraction
     hash[:fpl_team_list] = fpl_team_list
     hash[:status] = status
     hash[:editable] = editable.to_s
+    hash[:show_score] = show_score.to_s
 
     if show_list_positions
       hash[:list_positions] = list_position_arr if show_list_positions
@@ -223,6 +224,10 @@ class FplTeamLists::Hash < ApplicationInteraction
     else
       'started'
     end
+  end
+
+  def show_score
+    status == 'started' || status == 'finished'
   end
 
   def editable

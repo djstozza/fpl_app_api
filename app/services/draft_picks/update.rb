@@ -32,10 +32,10 @@ class DraftPicks::Update < ApplicationInteraction
     draft_pick.update(player: player)
     errors.merge!(draft_pick.errors)
 
-    league.players << player
+    league.players << player unless league.players.include?(player)
     errors.merge!(league.errors)
 
-    fpl_team.players << player
+    fpl_team.players << player unless fpl_team.players.include?(player)
     errors.merge!(fpl_team.errors)
   end
 
