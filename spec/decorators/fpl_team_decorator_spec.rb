@@ -12,10 +12,10 @@ RSpec.describe FplTeamDecorator, type: :decorator do
 
   context '#all_players_picked?' do
     it 'checkes whether all the draft picks of the fpl team have been picked' do
-      fpl_team = FactoryBot.create(:fpl_team)
+      fpl_team = FactoryBot.build_stubbed(:fpl_team)
 
       FplTeam::QUOTAS[:players].times do
-        FactoryBot.create(:draft_pick, :picked, fpl_team: fpl_team, league: fpl_team.league)
+        FactoryBot.build_stubbed(:draft_pick, :picked, fpl_team: fpl_team, league: fpl_team.league)
       end
 
       expect(fpl_team.decorate.all_players_picked?).to be_truthy

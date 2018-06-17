@@ -83,25 +83,50 @@ require 'rails_helper'
 
 RSpec.describe Player, type: :model do
   it 'requires a unique code' do
-    player = FactoryBot.create(:player)
+    player = FactoryBot.create(:player, :fwd)
 
-    expect(FactoryBot.build(:player, code: player.code)).not_to be_valid
+    expect(FactoryBot.build_stubbed(:player, :fwd, code: player.code)).not_to be_valid
   end
 
   it 'has valid scopes' do
-    fwd_pos = Position.find_by(singular_name_short: 'FWD')
-    mid_pos = Position.find_by(singular_name_short: 'MID')
-    def_pos = Position.find_by(singular_name_short: 'DEF')
-    gkp_pos = Position.find_by(singular_name_short: 'GKP')
-
-    forward = FactoryBot.create(:player, position: fwd_pos)
-    midfielder = FactoryBot.create(:player, position: mid_pos)
-    defender = FactoryBot.create(:player, position: def_pos)
-    goalkeeper = FactoryBot.create(:player, position: gkp_pos)
+    forward = FactoryBot.create(:player, :fwd)
+    midfielder = FactoryBot.create(:player, :mid)
+    defender = FactoryBot.create(:player, :def)
+    goalkeeper = FactoryBot.create(:player, :gkp)
 
     expect(Player.forwards).to contain_exactly(forward)
     expect(Player.midfielders).to contain_exactly(midfielder)
     expect(Player.defenders).to contain_exactly(defender)
     expect(Player.goalkeepers).to contain_exactly(goalkeeper)
+  end
+
+  it '#player_fixture_histories' do
+    round = FactoryBot.build_stubbed(:round)
+    fixture = FactoryBot.build_stubbed(:fixture, round: round)
+    minutes = 80
+    bps = 15
+    was_home = true
+
+    player = FactoryBot.build_stubbed(
+      :player,
+      :fwd,
+      :player_fixture_histories,
+      round: round,
+      fixture: fixture,
+      was_home: was_home,
+      minutes: minutes,
+      bps: bps,
+    )
+
+    player_fixture_history = player.player_fixture_histories.first
+
+    expect(player.team).to eq(fixture.home_team)
+    expect(player_fixture_history["round"]).to eq(round.id)
+    expect(player_fixture_history["fixture"]).to eq(fixture.id)
+    expect(player_fixture_history["was_home"]).to eq(was_home)
+    expect(player_fixture_history["minutes"]).to eq(minutes)
+    expect(player_fixture_history["bps"]).to eq(bps)
+
+    binding.pry
   end
 end
