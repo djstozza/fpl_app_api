@@ -15,20 +15,23 @@ describe FplTeamLists::Hash do
 
       bps = 15
 
-      transient_params = {
-        minutes: 80,
-        total_points: 5,
-        was_home: true,
-        bps: bps,
-        round: round,
-        fixture: fixture,
-      }
+      player_fixture_histories_arr = [
+        {
+          minutes: 80,
+          total_points: 5,
+          was_home: true,
+          bps: bps,
+          round: round,
+          fixture: fixture,
+        }
+      ]
 
       player = FactoryBot.create(
         :player,
         :player_fixture_histories,
         :"#{position.singular_name_short.downcase}",
-        transient_params,
+        team: fixture.home_team,
+        player_fixture_histories_arr: player_fixture_histories_arr,
       )
 
       list_position = FactoryBot.create(
@@ -50,7 +53,7 @@ describe FplTeamLists::Hash do
       })
 
       bonus = 3
-      transient_params[:total_points] += bonus
+      player_fixture_histories_arr.first[:total_points] += bonus
 
       params = {
         user: user,
@@ -63,7 +66,7 @@ describe FplTeamLists::Hash do
       result = outcome.result
 
       hash = list_position_hash(
-        transient_params.merge(
+        player_fixture_histories_arr.first.merge(
           fpl_team_list: fpl_team_list,
           list_position: list_position,
           position: position,
@@ -85,24 +88,27 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.create(:fpl_team, user: user)
       fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      position = Position.find_by(singular_name_short: 'FWD')
+      position = Position.find_by(singular_name_short: 'MID')
 
       bps = 15
 
-      transient_params = {
-        minutes: 80,
-        total_points: 5,
-        was_home: true,
-        bps: bps,
-        round: round,
-        fixture: fixture,
-      }
+      player_fixture_histories_arr = [
+        {
+          minutes: 80,
+          total_points: 5,
+          was_home: false,
+          bps: bps,
+          round: round,
+          fixture: fixture,
+        }
+      ]
 
       player = FactoryBot.create(
         :player,
         :player_fixture_histories,
         :"#{position.singular_name_short.downcase}",
-        transient_params,
+        team: fixture.away_team,
+        player_fixture_histories_arr: player_fixture_histories_arr,
       )
 
       list_position = FactoryBot.create(
@@ -134,7 +140,7 @@ describe FplTeamLists::Hash do
       result = outcome.result
 
       hash = list_position_hash(
-        transient_params.merge(
+        player_fixture_histories_arr.first.merge(
           fpl_team_list: fpl_team_list,
           list_position: list_position,
           position: position,
@@ -155,6 +161,7 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.create(:fpl_team, user: user)
       fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team, round: round)
       list_position = FactoryBot.create(:list_position, :def, :s1, fpl_team_list: fpl_team_list)
+
       player = list_position.player
       position = list_position.position
       team = player.team
@@ -208,6 +215,115 @@ describe FplTeamLists::Hash do
       expect(result[:list_positions]).to include(hash)
       expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to include(hash)
     end
+
+    it 'two player fixture histories in one round' do
+      user = FactoryBot.create(:user)
+
+      round = FactoryBot.create(:round)
+      team = FactoryBot.create(:team)
+      fixture_1 = FactoryBot.create(:fixture, started: true, finished: false, round: round, home_team: team)
+      fixture_2 = FactoryBot.create(:fixture, started: true, finished: true, round: round, away_team: team)
+
+      fpl_team = FactoryBot.create(:fpl_team, user: user)
+      fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team, round: round)
+
+      position = Position.find_by(singular_name_short: 'GKP')
+
+      bps = 15
+
+      player_fixture_histories_arr = [
+        {
+          minutes: 80,
+          total_points: 5,
+          was_home: true,
+          bps: bps,
+          round: round,
+          fixture: fixture_1,
+        },
+        {
+          minutes: 80,
+          total_points: 5,
+          was_home: false,
+          bps: bps,
+          round: round,
+          fixture: fixture_2,
+        }
+      ]
+
+      player = FactoryBot.create(
+        :player,
+        :player_fixture_histories,
+        :"#{position.singular_name_short.downcase}",
+        team: team,
+        player_fixture_histories_arr: player_fixture_histories_arr,
+      )
+
+      list_position = FactoryBot.create(
+        :list_position,
+        :starting,
+        player: player,
+        position: position,
+        fpl_team_list: fpl_team_list
+      )
+
+      bonus = 2
+      player_fixture_histories_arr.first[:total_points] += bonus
+
+      role = role(list_position: list_position)
+
+      fixture_1.update(stats: {
+        bps: [
+          { "value" => bps + 1, "element" => player.id + 1 },
+          { "value" => bps, "element" => player.id },
+          { "value" => bps - 2, "element" => player.id + 2 },
+        ]
+      })
+
+      fixture_2.update(stats: {
+        bps: [
+          { "value" => bps + 1, "element" => player.id + 1 },
+          { "value" => bps, "element" => player.id },
+          { "value" => bps - 2, "element" => player.id + 2 },
+        ]
+      })
+
+      params = {
+        user: user,
+        fpl_team: fpl_team,
+        fpl_team_list: fpl_team_list,
+        show_list_positions: true,
+      }
+
+      outcome = described_class.run(params)
+      result = outcome.result
+
+      hash_1 = list_position_hash(
+        player_fixture_histories_arr.first.merge(
+          fpl_team_list: fpl_team_list,
+          list_position: list_position,
+          position: position,
+          player: player,
+          fixture: fixture_1,
+        )
+      )
+
+      hash_2 = list_position_hash(
+        player_fixture_histories_arr.second.merge(
+          fpl_team_list: fpl_team_list,
+          list_position: list_position,
+          position: position,
+          player: player,
+          fixture: fixture_2,
+          i: 1,
+        )
+      )
+
+      expect(result[:list_positions]).to include(hash_1, hash_2)
+
+      hash_1['fixture_points'] += hash_2['fixture_points']
+      hash_1['fixture'] += ", #{hash_2['fixture']}"
+      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to include(hash_1)
+    end
   end
 
   private
@@ -222,9 +338,10 @@ describe FplTeamLists::Hash do
     minutes:,
     total_points:,
     was_home:,
-    bps:
+    bps:,
+    i: 0
   )
-    team = was_home ? fixture.home_team : fixture.away_team
+    team = player.team
     opponent = was_home ? fixture.away_team : fixture.home_team
     leg = was_home ? 'H' : 'A'
     role = role(list_position: list_position)
@@ -265,7 +382,7 @@ describe FplTeamLists::Hash do
       "fixture_points" => total_points,
       "home" => was_home,
       "bps" => fixture.stats["bps"],
-      "i" => 0,
+      "i" => i,
       "leg" => leg,
       "advantage" => advantage,
       "fixture" => "#{opponent.short_name} (#{leg})",

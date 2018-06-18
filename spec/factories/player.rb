@@ -29,27 +29,22 @@ FactoryBot.define do
 
     trait :player_fixture_histories do
       transient do
-        round nil
-        fixture nil
-        was_home nil
-        minutes nil
-        total_points nil
-        bps nil
+        player_fixture_histories_arr []
       end
 
       player_fixture_histories {
-        [
-          "round" => round.id,
-          "fixture" => fixture.id,
-          "total_points" => total_points,
-          "kickoff_time" => fixture.kickoff_time.to_s,
-          "was_home" => was_home,
-          "minutes" => minutes,
-          "bps" => bps,
-        ]
+        player_fixture_histories_arr.map do |player_fixture_history|
+          {
+            "round" => player_fixture_history[:round].id,
+            "fixture" => player_fixture_history[:fixture].id,
+            "total_points" => player_fixture_history[:total_points],
+            "kickoff_time" => player_fixture_history[:fixture].kickoff_time.to_s,
+            "was_home" => player_fixture_history[:was_home],
+            "minutes" => player_fixture_history[:minutes],
+            "bps" => player_fixture_history[:bps],
+          }
+        end
       }
-
-      team { was_home ? fixture.home_team : fixture.away_team }
     end
   end
 end
