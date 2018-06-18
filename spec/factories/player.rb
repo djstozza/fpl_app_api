@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence :first_name do |n|
       "first_name #{n}"
     end
+
     sequence :last_name do |n|
       "last_name #{n}"
     end
@@ -10,6 +11,7 @@ FactoryBot.define do
     code { Faker::Number.unique.number(5) }
     status { 'a' }
     association :team, factory: :team
+    position { Position.find_by(singular_name: 'Forward') }
 
     trait :fwd do
       position { Position.find_by(singular_name: 'Forward') }
