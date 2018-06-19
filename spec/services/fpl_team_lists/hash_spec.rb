@@ -9,7 +9,6 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
         fpl_team_list: fpl_team_list
       )
 
@@ -26,8 +25,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -41,8 +39,23 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
+      )
+
+      result = outcome.result
+      expect(result[:status]).to eq('trade')
+    end
+
+    it 'has status of trade if the deadline time has not been passed and first round' do
+      round = FactoryBot.build_stubbed(:round, deadline_time: 2.days.from_now)
+      fpl_team = FactoryBot.build_stubbed(:fpl_team)
+      fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
+
+      expect(Round).to receive(:first).and_return(double(Round, id: round.id)).at_least(1)
+
+      outcome = described_class.run(
+        user: fpl_team.user,
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -56,8 +69,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -71,8 +83,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -86,8 +97,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -104,8 +114,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -120,8 +129,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -136,8 +144,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -152,8 +159,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -168,8 +174,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -184,8 +189,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -201,8 +205,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -212,8 +215,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -223,8 +225,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -241,8 +242,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -253,8 +253,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -270,8 +269,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -281,8 +279,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -292,8 +289,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -303,8 +299,7 @@ describe FplTeamLists::Hash do
 
       outcome = described_class.run(
         user: fpl_team.user,
-        fpl_team: fpl_team,
-        fpl_team_list: fpl_team_list
+        fpl_team_list: fpl_team_list,
       )
 
       result = outcome.result
@@ -368,7 +363,6 @@ describe FplTeamLists::Hash do
 
       params = {
         user: user,
-        fpl_team: fpl_team,
         fpl_team_list: fpl_team_list,
         show_list_positions: true,
       }
@@ -442,7 +436,6 @@ describe FplTeamLists::Hash do
 
       params = {
         user: user,
-        fpl_team: fpl_team,
         fpl_team_list: fpl_team_list,
         show_list_positions: true,
       }
@@ -481,7 +474,6 @@ describe FplTeamLists::Hash do
 
       params = {
         user: user,
-        fpl_team: fpl_team,
         fpl_team_list: fpl_team_list,
         show_list_positions: true,
       }
@@ -600,7 +592,6 @@ describe FplTeamLists::Hash do
 
       params = {
         user: user,
-        fpl_team: fpl_team,
         fpl_team_list: fpl_team_list,
         show_list_positions: true,
       }
@@ -651,7 +642,6 @@ describe FplTeamLists::Hash do
 
         params = {
           user: user,
-          fpl_team: fpl_team,
           fpl_team_list: fpl_team_list,
           show_waiver_picks: true,
         }
@@ -692,7 +682,6 @@ describe FplTeamLists::Hash do
 
         params = {
           user: user,
-          fpl_team: fpl_team,
           fpl_team_list: fpl_team_list,
           show_waiver_picks: true,
         }
@@ -761,7 +750,6 @@ describe FplTeamLists::Hash do
 
         params = {
           user: user,
-          fpl_team: fpl_team,
           fpl_team_list: fpl_team_list,
           show_trade_groups: true,
         }
@@ -827,7 +815,6 @@ describe FplTeamLists::Hash do
 
         params = {
           user: user,
-          fpl_team: fpl_team,
           fpl_team_list: fpl_team_list,
           show_trade_groups: true,
         }
@@ -846,7 +833,6 @@ describe FplTeamLists::Hash do
 
         params = {
           user: user,
-          fpl_team: fpl_team,
           fpl_team_list: fpl_team_list,
           show_trade_groups: true,
         }
