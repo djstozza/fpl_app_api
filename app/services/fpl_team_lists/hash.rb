@@ -151,6 +151,7 @@ class FplTeamLists::Hash < ApplicationInteraction
         :team_h_id,
         :team_a_id,
         :event_points,
+        :started,
         :finished,
         :finished_provisional,
         :news,
@@ -186,9 +187,9 @@ class FplTeamLists::Hash < ApplicationInteraction
 
     hash['advantage'] =
       if hash['home']
-        hash['team_a_difficulty'] - hash['team_h_difficulty']
-      else
         hash['team_h_difficulty'] - hash['team_a_difficulty']
+      else
+        hash['team_a_difficulty'] - hash['team_h_difficulty']
       end
   end
 

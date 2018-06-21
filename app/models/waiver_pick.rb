@@ -20,7 +20,7 @@ class WaiverPick < ApplicationRecord
   belongs_to :out_player, class_name: Player, foreign_key: :out_player_id
   belongs_to :in_player, class_name: Player, foreign_key: :in_player_id
   belongs_to :round
-  validates :status, :fpl_team_list_id, :in_player_id, :out_player_id, :league_id, :round_id, presence: true
+  validates :status, :pick_number, presence: true
   validates_uniqueness_of :pick_number, scope: :fpl_team_list_id, on: :create
   enum status: { pending: 0, approved: 1, declined: 2 }
 end

@@ -11,5 +11,6 @@ FactoryBot.define do
     is_previous { false }
     is_next { false }
     mini_draft { nil }
+    finished { false }
   end
 end

@@ -102,20 +102,29 @@ RSpec.describe Player, type: :model do
 
   it '#player_fixture_histories' do
     round = FactoryBot.build_stubbed(:round)
-    fixture = FactoryBot.build_stubbed(:fixture, round: round)
+    team = FactoryBot.build_stubbed(:team)
+    fixture = FactoryBot.build_stubbed(:fixture, round: round, home_team: team)
+
     minutes = 80
     bps = 15
     was_home = true
+
+    player_fixture_histories_arr = [
+      {
+        round: round,
+        fixture: fixture,
+        was_home: was_home,
+        minutes: minutes,
+        bps: bps,
+      }
+    ]
 
     player = FactoryBot.build_stubbed(
       :player,
       :fwd,
       :player_fixture_histories,
-      round: round,
-      fixture: fixture,
-      was_home: was_home,
-      minutes: minutes,
-      bps: bps,
+      team: team,
+      player_fixture_histories_arr: player_fixture_histories_arr,
     )
 
     player_fixture_history = player.player_fixture_histories.first
@@ -126,7 +135,5 @@ RSpec.describe Player, type: :model do
     expect(player_fixture_history["was_home"]).to eq(was_home)
     expect(player_fixture_history["minutes"]).to eq(minutes)
     expect(player_fixture_history["bps"]).to eq(bps)
-
-    binding.pry
   end
 end

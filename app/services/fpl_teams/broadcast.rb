@@ -8,6 +8,8 @@ class FplTeams::Broadcast < ApplicationInteraction
   boolean :show_list_positions, default: false
   string :info, default: nil
 
+  delegate :fpl_team_lists, to: :fpl_team
+
   def execute
     fpl_team_hash = FplTeams::Hash.run(
       fpl_team: fpl_team,
@@ -19,6 +21,14 @@ class FplTeams::Broadcast < ApplicationInteraction
       show_list_positions: show_list_positions,
     ).result
 
+    binding.pry
+
     ActionCable.server.broadcast("fpl_team_#{fpl_team.id}", fpl_team_hash.merge(info: info))
+  end
+
+  private
+
+  def set_fpl_team_list
+    fpl_team_lists.find_by(round: round)
   end
 end

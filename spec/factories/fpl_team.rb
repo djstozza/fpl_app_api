@@ -5,5 +5,6 @@ FactoryBot.define do
     end
     association :user, factory: :user
     association :league, factory: :league
+    total_score { 50 }
   end
 end

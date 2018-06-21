@@ -42,7 +42,7 @@ class FplTeams::Hash < ApplicationInteraction
     {
       fpl_team: fpl_team,
       fpl_team_list: fpl_team_list,
-      fpl_team_lists: fpl_team.fpl_team_lists.sort,
+      fpl_team_lists: fpl_team_lists.reload.sort,
       current_user: user,
       user_owns_fpl_team: user_owns_fpl_team,
       league: league,
