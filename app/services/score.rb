@@ -1,6 +1,7 @@
 class Score < ApplicationInteraction
   def execute
     return if Round.last == round && round.finished
+    return if Time.now < round.deadline_time + round.deadline_time_game_offset
 
     League.active.each do |league|
       compose(::Leagues::Score, league: league, round: round)
