@@ -21,8 +21,6 @@ class FplTeams::Broadcast < ApplicationInteraction
       show_list_positions: show_list_positions,
     ).result
 
-    binding.pry
-
     ActionCable.server.broadcast("fpl_team_#{fpl_team.id}", fpl_team_hash.merge(info: info))
   end
 
