@@ -21,7 +21,13 @@ class Api::V1::FplTeamsController < ApplicationController
       FplTeams::UpdateForm.run(permitted_params.merge(fpl_team: @fpl_team, user: current_api_v1_user))
 
     fpl_team = outcome.result || outcome.fpl_team
-    result_hash = { fpl_team: fpl_team, current_user: current_api_v1_user }
+
+    result_hash = FplTeams::Hash.run(
+      fpl_team: fpl_team,
+      user: current_api_v1_user,
+      show_list_positions: true,
+      show_waiver_picks: true,
+    ).result
 
     if outcome.valid?
       result_hash[:success] = 'Fpl team successfully updated.'
