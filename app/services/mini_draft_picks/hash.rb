@@ -104,7 +104,11 @@ class MiniDraftPicks::Hash < ApplicationInteraction
   end
 
   def fpl_team_arr
-    fpl_teams.order(mini_draft_pick_number: :desc)
+    if season == 'summer'
+      fpl_teams.order(mini_draft_pick_number: :desc)
+    else
+      fpl_teams.order(rank: :asc)
+    end
   end
 
   def fpl_team_count
