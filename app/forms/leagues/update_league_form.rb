@@ -25,7 +25,7 @@ class Leagues::UpdateLeagueForm < ApplicationInteraction
   def league_name_uniqueness
     return if name == league.name
     if League.where('lower(name) = ?', name.downcase).count.positive?
-      errors.add(:league_name, "#{name} has already been taken")
+      errors.add(:name, "#{name} has already been taken")
     end
   end
 

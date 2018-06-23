@@ -38,7 +38,7 @@ class  Api::V1::LeaguesController < ApplicationController
   end
 
   def update
-    form = Leagues::UpdateLeagueForm.run(league_params.merge(league: @league, user: current_api_v1_user))
+    form = ::Leagues::UpdateLeagueForm.run(league_params.merge(league: @league, user: current_api_v1_user))
     if form.valid?
       render json: { league: form.result, success: 'League successfully updated.' }
     else
