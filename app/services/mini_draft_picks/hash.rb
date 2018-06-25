@@ -68,7 +68,7 @@ class MiniDraftPicks::Hash < ApplicationInteraction
   end
 
   def season
-    Time.now > Round::WINTER_MINI_DRAFT_DEALINE ? 'winter' : 'summer'
+    Time.now > Round.winter_mini_draft_deadline ? 'winter' : 'summer'
   end
 
   def next_mini_draft_pick_number
@@ -121,12 +121,10 @@ class MiniDraftPicks::Hash < ApplicationInteraction
   end
 
   def drafting_deadline_time
-    if Time.now < Round::SUMMER_MINI_DRAFT_DEADLINE
-      Round.first.deadline_time
-    elsif Time.now < Round::WINTER_MINI_DRAFT_DEALINE
-      Round::SUMMER_MINI_DRAFT_DEADLINE
+    if Time.now < Round.winter_mini_draft_deadline
+      Round.summer_mini_draft_deadline
     else
-      Round::WINTER_MINI_DRAFT_DEALINE
+      Round.winter_mini_draft_deadline
     end
   end
 end

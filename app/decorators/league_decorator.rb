@@ -61,12 +61,12 @@ class LeagueDecorator < ApplicationDecorator
   private
 
   def drafting_deadline_time
-    if Time.now < Round::SUMMER_MINI_DRAFT_DEADLINE
+    if Time.now < Round.summer_mini_draft_deadline
       Round.first.deadline_time
-    elsif Time.now < Round::WINTER_MINI_DRAFT_DEALINE
-      Round::SUMMER_MINI_DRAFT_DEADLINE
+    elsif Time.now < Round.winter_mini_draft_deadline
+      Round.summer_mini_draft_deadline
     else
-      Round::WINTER_MINI_DRAFT_DEALINE
+      Round.winter_mini_draft_deadline
     end
   end
 end
