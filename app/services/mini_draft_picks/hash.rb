@@ -37,7 +37,7 @@ class MiniDraftPicks::Hash < ApplicationInteraction
   end
 
   def all_non_passed_mini_draft_picks
-    mini_draft_picks.order(:pick_number).where.not(passed: true).joins(:fpl_team).joins(
+    mini_draft_picks.order(:pick_number).where(season: season).where.not(passed: true).joins(:fpl_team).joins(
       'JOIN players AS in_players ON mini_draft_picks.in_player_id = in_players.id'
     ).joins(
       'JOIN players AS out_players ON mini_draft_picks.out_player_id = out_players.id'

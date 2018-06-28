@@ -171,7 +171,7 @@ RSpec.describe MiniDraftPicks::Hash do
   end
 
   context '#mini_draft_picks' do
-    it 'shows all non passed mini_draft_picks' do
+    it 'shows all non passed mini_draft_picks from that season' do
       round = FactoryBot.build_stubbed(:round, deadline_time: 1.year.from_now)
       expect(Round).to receive(:first).and_return(round).at_least(1)
 
@@ -205,11 +205,22 @@ RSpec.describe MiniDraftPicks::Hash do
           pick_number: 2,
         )
 
+        mini_draft_pick_3 =
+          FactoryBot.create(
+            :mini_draft_pick,
+            :winter,
+            :picked,
+            fpl_team: fpl_team_2,
+            round: current_round,
+            league: league,
+            pick_number: 1,
+          )
+
       outcome = described_class.run(league: league, user: user)
       result = outcome.result
 
       expect(result[:mini_draft_picks].pluck(:id)).to include(mini_draft_pick_2.id)
-      expect(result[:mini_draft_picks].pluck(:id)).not_to include(mini_draft_pick_1.id)
+      expect(result[:mini_draft_picks].pluck(:id)).not_to include(mini_draft_pick_1.id, mini_draft_pick_3.id)
 
       in_player = mini_draft_pick_2.in_player
       out_player = mini_draft_pick_2.out_player

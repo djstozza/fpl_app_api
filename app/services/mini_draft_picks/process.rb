@@ -4,8 +4,10 @@ class MiniDraftPicks::Process < ApplicationInteraction
   object :fpl_team_list, class: FplTeamList
   object :list_position, class: ListPosition
   object :in_player, class: Player
+  object :out_player, class: Player, default: -> { list_position.player }
 
   validate :round_is_current
+  validate :mini_draft_pick_occurring_in_valid_period
   validate :player_in_fpl_team
   validate :mini_draft_pick_round
   validate :fpl_team_turn
@@ -40,6 +42,8 @@ class MiniDraftPicks::Process < ApplicationInteraction
 
     list_position.update(player: in_player)
     errors.merge!(list_position.errors)
+
+    halt_if_errors!
 
     if consecutive_passes && current_mini_draft_pick.present?
       MiniDraftPicks::Pass.run(
@@ -94,11 +98,11 @@ class MiniDraftPicks::Process < ApplicationInteraction
 
   def mini_draft_pick_round
     return if round.mini_draft
-    errors.add(:base, 'Mini draft picks cannot be performed at this time')
+    errors.add(:base, 'Mini draft picks cannot be performed at this time.')
   end
 
   def mini_draft_pick_occurring_in_valid_period
-    if Time.now > round.deadline_time
+    if Time.now > round.deadline_time - 1.day
       errors.add(:base, 'The deadline time for making mini draft picks has passed.')
     end
   end
@@ -146,9 +150,5 @@ class MiniDraftPicks::Process < ApplicationInteraction
 
   def fpl_team
     fpl_team_list.fpl_team
-  end
-
-  def out_player
-    list_position.player
   end
 end

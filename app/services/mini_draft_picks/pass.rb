@@ -6,9 +6,11 @@ class MiniDraftPicks::Pass < ApplicationInteraction
   validate :round_is_current
   validate :fpl_team_turn
   validate :authorised_user
+  validate :mini_draft_pick_occurring_in_valid_period
+  validate :mini_draft_pick_round
 
   def execute
-    outcome = MiniDraftPick.create(
+    mini_draft_pick = MiniDraftPick.create(
       fpl_team: fpl_team,
       round: round,
       league: league,
@@ -16,7 +18,9 @@ class MiniDraftPicks::Pass < ApplicationInteraction
       pick_number: mini_draft_pick_hash[:next_mini_draft_pick_number],
       passed: true
     )
-    errors.merge!(outcome.errors) if outcome.errors.any?
+    errors.merge!(mini_draft_pick.errors) if mini_draft_pick.errors.any?
+
+    halt_if_errors!
 
     if mini_draft_pick_hash[:consecutive_passes]
       self.class.delay.run(
@@ -27,6 +31,8 @@ class MiniDraftPicks::Pass < ApplicationInteraction
     else
       MiniDraftPicks::Broadcast.delay.run(league: league, fpl_team_list: fpl_team_list, user: user, passed: true)
     end
+
+    mini_draft_pick
   end
 
   def mini_draft_pick_hash
@@ -54,18 +60,18 @@ class MiniDraftPicks::Pass < ApplicationInteraction
 
   def mini_draft_pick_round
     return if round.mini_draft
-    errors.add(:base, 'Mini draft picks cannot be performed at this time')
+    errors.add(:base, 'Mini draft picks cannot be performed at this time.')
   end
 
   def mini_draft_pick_occurring_in_valid_period
-    if Time.now > round.deadline_time
+    if Time.now > round.deadline_time - 1.day
       errors.add(:base, 'The deadline time for making mini draft picks has passed.')
     end
   end
 
   def fpl_team_turn
     return if mini_draft_pick_hash[:next_fpl_team] == fpl_team
-    errors.add(:base, 'You pass out of turn.')
+    errors.add(:base, 'You cannot pass out of turn.')
   end
 
   def authorised_user
