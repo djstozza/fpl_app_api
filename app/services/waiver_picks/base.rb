@@ -2,10 +2,8 @@ class WaiverPicks::Base < ApplicationInteraction
   object :user, class: User
   object :fpl_team_list, class: FplTeamList
 
-  object :round, class: Round, default: -> { fpl_team_list.round }
-  object :fpl_team, class: FplTeam, default: -> { fpl_team_list.fpl_team }
-  array :waiver_picks, default: -> { fpl_team_list.waiver_picks }
-  object :league, class: League, default: -> { fpl_team.league }
+  delegate :round, :fpl_team, :waiver_picks, to: :fpl_team_list
+  delegate :league, to: :fpl_team
 
   validate :authorised_user
   validate :round_is_current

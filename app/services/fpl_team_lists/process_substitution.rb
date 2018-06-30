@@ -3,25 +3,25 @@ class FplTeamLists::ProcessSubstitution < ApplicationInteraction
   object :substitute_list_position, class: ListPosition
   object :user, class: User
 
-  object :fpl_team_list, class: FplTeamList, default: -> { list_position.fpl_team_list }
-  object :round, class: Round, default: -> { fpl_team_list.round }
-  object :fpl_team, class: FplTeam, default: -> { fpl_team_list.fpl_team }
-  object :player, class: Player, default: -> { list_position.player }
-  object :substitute_player, class: Player, default: -> { substitute_list_position.player }
+  delegate :fpl_team_list, :player, to: :list_position
+  delegate :round, :fpl_team, to: :fpl_team_list
+  delegate :player, to: :substitute_list_position, prefix: :substitute
 
   validate :round_is_current
   validate :before_deadline_time
   validate :authorised_user
-  validate :player_team_presnece
+  validate :player_team_presence
   validate :substitute_player_team_presence
   validate :valid_starting_line_up
 
   def execute
     role = list_position.role
-    list_position.update(role: substitute_list_position.role)
+    list_position.assign_attributes(role: substitute_list_position.role)
+    list_position.save
     errors.merge!(list_position.errors)
 
-    substitute_list_position.update(role: role)
+    substitute_list_position.assign_attributes(role: role)
+    substitute_list_position.save
     errors.merge!(substitute_list_position.errors)
   end
 
@@ -53,7 +53,7 @@ class FplTeamLists::ProcessSubstitution < ApplicationInteraction
     errors.add(:base, 'You are not authorised to make changes to this team.')
   end
 
-  def player_team_presnece
+  def player_team_presence
     return if fpl_team.players.include?(player)
     errors.add(:base, "#{player.decorate.name} isn't part of your team.")
   end

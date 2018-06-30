@@ -20,5 +20,5 @@ class FplTeamList < ApplicationRecord
   has_many :players, through: :list_positions
   validates_uniqueness_of :round_id, scope: :fpl_team_id
 
-  delegate :user, to: :fpl_team
+  delegate :user, :league, to: :fpl_team
 end

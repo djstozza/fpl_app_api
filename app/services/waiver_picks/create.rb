@@ -1,7 +1,8 @@
 class WaiverPicks::Create < WaiverPicks::Base
   object :list_position, class: ListPosition
   object :in_player, class: Player
-  object :out_player, class: Player, default: -> { list_position.player }
+
+  delegate :player, to: :list_position, prefix: :out
 
   validate :out_player_in_fpl_team_list
   validate :in_player_unpicked

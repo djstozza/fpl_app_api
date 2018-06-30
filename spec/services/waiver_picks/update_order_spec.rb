@@ -62,7 +62,6 @@ RSpec.describe WaiverPicks::UpdateOrder do
 
     round = FactoryBot.build_stubbed(:round, is_current: false, deadline_time: 3.days.from_now)
 
-
     league = FactoryBot.build_stubbed(:league)
     fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
     fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
@@ -83,7 +82,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       pick_number: 2,
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2]).at_least(1)
 
     outcome = described_class.run(
       fpl_team_list: fpl_team_list,
@@ -123,7 +122,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       pick_number: 2,
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2]).at_least(1)
 
     outcome = described_class.run(
       fpl_team_list: fpl_team_list,
@@ -162,7 +161,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       pick_number: 2,
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2]).at_least(1)
 
     user = FactoryBot.build_stubbed(:user)
 
@@ -203,7 +202,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       pick_number: 2,
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2]).at_least(1)
 
     outcome = described_class.run(
       fpl_team_list: fpl_team_list,
@@ -242,7 +241,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       pick_number: 2,
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2]).at_least(1)
 
     outcome = described_class.run(
       fpl_team_list: fpl_team_list,
@@ -288,7 +287,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       pick_number: 2,
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_2, waiver_pick_3])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_2, waiver_pick_3]).at_least(1)
 
     outcome = described_class.run(
       fpl_team_list: fpl_team_list,
@@ -329,7 +328,7 @@ RSpec.describe WaiverPicks::UpdateOrder do
       status: 'approved',
     )
 
-    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2])
+    expect(fpl_team_list).to receive(:waiver_picks).and_return([waiver_pick_1, waiver_pick_2]).at_least(1)
 
     outcome = described_class.run(
       fpl_team_list: fpl_team_list,

@@ -3,11 +3,10 @@ class FplTeamLists::ProcessTrade < ApplicationInteraction
   object :list_position, class: ListPosition
   object :in_player, class: Player
 
-  object :fpl_team_list, class: FplTeamList, default: -> { list_position.fpl_team_list }
-  object :fpl_team, class: FplTeam, default: -> { fpl_team_list.fpl_team}
-  object :round, class: Round, default: -> { fpl_team_list.round }
-  object :league, class: League, default: -> { fpl_team.league }
-  object :out_player, class: Player, default: -> { list_position.player }
+  delegate :fpl_team_list, to: :list_position
+  delegate :player, to: :list_position, prefix: :out
+  delegate :fpl_team, :round, to: :fpl_team_list
+  delegate :league, to: :fpl_team
 
   validate :authorised_user
   validate :out_player_in_fpl_team
@@ -28,8 +27,11 @@ class FplTeamLists::ProcessTrade < ApplicationInteraction
     league.players << in_player
     errors.merge!(league.errors)
 
-    list_position.update(player: in_player)
+    list_position.assign_attributes(player: in_player)
+    list_position.save
     errors.merge!(list_position.errors)
+
+    list_position
   end
 
   def fpl_team_list_hash
