@@ -42,7 +42,7 @@ class WaiverPicks::Create < WaiverPicks::Base
 
   def maximum_number_of_players_from_team
     player_arr = fpl_team_list.players.to_a.delete_if { |player| player == out_player }
-    team_arr = player_arr.map { |player| player.team_id }
+    team_arr = player_arr.pluck(:team_id)
     team_arr << in_player.team_id
     return if team_arr.count(in_player.team_id) <= FplTeam::QUOTAS[:team]
     errors.add(
@@ -53,7 +53,9 @@ class WaiverPicks::Create < WaiverPicks::Base
 
   def duplicate_waiver_picks
     existing_waiver_pick = fpl_team_list.waiver_picks.find_by(in_player: in_player, out_player: out_player)
+
     return if existing_waiver_pick.nil?
+
     errors.add(
       :base,
       "Duplicate waiver pick - (Pick number: #{existing_waiver_pick.pick_number} " \

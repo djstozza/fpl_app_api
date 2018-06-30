@@ -2,31 +2,27 @@ class WaiverPicks::Process < ApplicationInteraction
   object :round, class: Round, default: -> { Round.current }
 
   def execute
+    return if Time.now < round.deadline_time - 1.day
     League.active.each do |league|
-      waiver_groups = league.waiver_picks.where(round: round).group_by { |pick| pick.pick_number }
-      waiver_groups.sort.each do |_k, v|
-        v.sort { |a, b| b.fpl_team_list.fpl_team.rank <=> a.fpl_team_list.fpl_team.rank }.each do |pick|
-          out_player = pick.out_player
-          in_player = pick.in_player
-          fpl_team_list = pick.fpl_team_list
-          fpl_team = fpl_team_list.fpl_team
-
-          next if league.players.include?(in_player)
-          next if fpl_team.players.include?(in_player)
-          next unless fpl_team.players.include?(out_player)
-          next if out_player.position != in_player.position
-
-          fpl_team_list.list_positions.find_by(player: out_player).update(player: in_player)
-          league.players.delete(out_player)
-          league.players << in_player
-          fpl_team.players.delete(out_player)
-          fpl_team.players << in_player
-
-          pick.update(status: 'approved')
+      waiver_groups(league).each do |_k, waiver_group|
+        waiver_group_sorted_by_fpl_team(waiver_group).each do |waiver_pick|
+          compose(WaiverPicks::Approve, waiver_pick: waiver_pick)
         end
       end
 
       league.waiver_picks.where(round: round).pending.update_all(status: 'declined')
+    end
+  end
+
+  private
+
+  def waiver_groups(league)
+    league.waiver_picks.where(round: round).group_by { |pick| pick.pick_number }.sort
+  end
+
+  def waiver_group_sorted_by_fpl_team(waiver_group)
+    waiver_group.sort do |a, b|
+      b.fpl_team.rank <=> a.fpl_team.rank
     end
   end
 end
