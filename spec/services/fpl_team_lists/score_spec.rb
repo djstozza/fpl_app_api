@@ -82,8 +82,8 @@ RSpec.describe FplTeamLists::Score do
     outcome = described_class.run(fpl_team_list: fpl_team_list)
     expect(outcome).to be_valid
 
-    expect(fpl_team_list.list_positions.starting).to include(list_position_1)
-    expect(fpl_team_list.list_positions.substitutes).to include(list_position_2)
+    expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
+    expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
 
     bonus = bps_arr.reverse.index { |h| h['element'] == player_1.id } + 1
     score = player_1_total_points + bonus
@@ -170,8 +170,8 @@ RSpec.describe FplTeamLists::Score do
     outcome = described_class.run(fpl_team_list: fpl_team_list)
     expect(outcome).to be_valid
 
-    expect(fpl_team_list.list_positions.starting).to include(list_position_1)
-    expect(fpl_team_list.list_positions.substitutes).to include(list_position_2)
+    expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
+    expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
     expect(fpl_team_list.total_score).to eq(player_1_total_points)
   end
 
@@ -252,8 +252,8 @@ RSpec.describe FplTeamLists::Score do
     outcome = described_class.run(fpl_team_list: fpl_team_list)
     expect(outcome).to be_valid
 
-    expect(fpl_team_list.list_positions.starting).to include(list_position_1)
-    expect(fpl_team_list.list_positions.substitutes).to include(list_position_2)
+    expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
+    expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
     expect(fpl_team_list.total_score).to eq(0)
   end
 
@@ -379,12 +379,12 @@ RSpec.describe FplTeamLists::Score do
 
     # List Position 1 is still starting because the fixture hasn't finished yet (still has the potential to play)
     # even though Player 1 hasn't played any minutes yet
-    expect(fpl_team_list.list_positions.starting).to include(list_position_1, list_position_3, list_position_4)
+    expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1, list_position_3, list_position_4)
 
     # List Position 2 was substituted with List Position 4
     # Player 2 had a bye this Round (no Fixture and hence no player_fixture_history i.e. nil minutes)
     # Player 4 played minutes
-    expect(fpl_team_list.list_positions.substitutes).to include(list_position_2)
+    expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
 
     # Player 3 had one bonus point
     player_3_bonus = bps_arr.reverse.index { |h| h['element'] == player_3.id } + 1
@@ -528,8 +528,8 @@ RSpec.describe FplTeamLists::Score do
     outcome = described_class.run(fpl_team_list: fpl_team_list)
     expect(outcome).to be_valid
 
-    expect(fpl_team_list.list_positions.starting).to include(list_position_4)
-    expect(fpl_team_list.list_positions.substitutes).to include(
+    expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_4)
+    expect(fpl_team_list.list_positions.substitutes).to contain_exactly(
       list_position_1,
       list_position_2,
       list_position_3,
@@ -634,8 +634,8 @@ RSpec.describe FplTeamLists::Score do
     outcome = described_class.run(fpl_team_list: fpl_team_list)
     expect(outcome).to be_valid
 
-    expect(fpl_team_list.list_positions.starting).to include(list_position_1)
-    expect(fpl_team_list.list_positions.substitutes).to include(list_position_2)
+    expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
+    expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
     expect(fpl_team_list.total_score).to eq(player_1_total_points)
   end
 end

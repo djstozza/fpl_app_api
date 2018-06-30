@@ -380,8 +380,8 @@ describe FplTeamLists::Hash do
         )
       )
 
-      expect(result[:list_positions]).to include(hash)
-      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to include(hash)
+      expect(result[:list_positions]).to contain_exactly(hash)
+      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to contain_exactly(hash)
     end
 
     it 'away fixture, fixture finished' do
@@ -453,8 +453,8 @@ describe FplTeamLists::Hash do
         )
       )
 
-      expect(result[:list_positions]).to include(hash)
-      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to include(hash)
+      expect(result[:list_positions]).to contain_exactly(hash)
+      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to contain_exactly(hash)
     end
 
     it 'bye' do
@@ -515,8 +515,8 @@ describe FplTeamLists::Hash do
         "fixture" => "BYE",
       }
 
-      expect(result[:list_positions]).to include(hash)
-      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to include(hash)
+      expect(result[:list_positions]).to contain_exactly(hash)
+      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to contain_exactly(hash)
     end
 
     it 'two player fixture histories in one round' do
@@ -620,11 +620,11 @@ describe FplTeamLists::Hash do
         )
       )
 
-      expect(result[:list_positions]).to include(hash_1, hash_2)
+      expect(result[:list_positions]).to contain_exactly(hash_1, hash_2)
 
       hash_1['fixture_points'] += hash_2['fixture_points']
       hash_1['fixture'] += ", #{hash_2['fixture']}"
-      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to include(hash_1)
+      expect(result.dig(:grouped_list_positions, role, position.singular_name_short)).to contain_exactly(hash_1)
     end
 
     context '#show_waiver_picks' do
@@ -652,7 +652,7 @@ describe FplTeamLists::Hash do
         out_player = waiver_pick.out_player
         in_player = waiver_pick.in_player
 
-        expect(result[:waiver_picks]).to include({
+        expect(result[:waiver_picks]).to contain_exactly({
           "id" => waiver_pick.id,
           "pick_number" => waiver_pick.pick_number,
           "status" => waiver_pick.status,
@@ -757,7 +757,7 @@ describe FplTeamLists::Hash do
         outcome = described_class.run(params)
         result = outcome.result
 
-        expect(result.dig(:out_trade_groups, 'pending')).to include(
+        expect(result.dig(:out_trade_groups, 'pending')).to contain_exactly(
           trade_group_hash(
             trade_group: out_trade_group,
             inter_team_trade: inter_team_trade_1,
@@ -768,7 +768,7 @@ describe FplTeamLists::Hash do
           )
         )
 
-        expect(result.dig(:in_trade_groups, 'submitted')).to include(
+        expect(result.dig(:in_trade_groups, 'submitted')).to contain_exactly(
           trade_group_hash(
             trade_group: in_trade_group,
             inter_team_trade: inter_team_trade_2,

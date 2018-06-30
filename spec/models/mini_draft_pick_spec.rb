@@ -74,8 +74,8 @@ RSpec.describe MiniDraftPick, type: :model do
       mini_draft_pick_2 = FactoryBot.create(:mini_draft_pick, :passed)
       mini_draft_pick_3 = MiniDraftPick.new
 
-      expect(MiniDraftPick.completed).to include(mini_draft_pick_1, mini_draft_pick_2)
-      expect(MiniDraftPick.completed).not_to include(mini_draft_pick_3)
+      expect(MiniDraftPick.completed).to contain_exactly(mini_draft_pick_1, mini_draft_pick_2)
+      expect(MiniDraftPick.completed).not_to contain_exactly(mini_draft_pick_3)
     end
   end
 end

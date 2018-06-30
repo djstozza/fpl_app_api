@@ -50,7 +50,7 @@ RSpec.describe WaiverPicks::Delete do
 
     expect(outcome).to be_valid
     expect(fpl_team_list.waiver_picks.count).to eq(3)
-    expect(fpl_team_list.waiver_picks).not_to include(waiver_pick_1)
+    expect(fpl_team_list.waiver_picks).to contain_exactly(waiver_pick_2, waiver_pick_3, waiver_pick_4)
     expect(waiver_pick_2.reload.pick_number).to eq(1)
     expect(waiver_pick_3.reload.pick_number).to eq(2)
     expect(waiver_pick_4.reload.pick_number).to eq(3)

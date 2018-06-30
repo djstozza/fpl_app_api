@@ -59,7 +59,7 @@ RSpec.describe MiniDraftPicks::Hash do
       result = outcome.result
 
       expect(result[:season]).to eq('summer')
-      expect(result[:fpl_teams]).to include(fpl_team_1, fpl_team_2)
+      expect(result[:fpl_teams]).to contain_exactly(fpl_team_1, fpl_team_2)
       expect(result[:next_fpl_team]).to eq(fpl_team_1)
 
       current_mini_draft_pick = result[:current_mini_draft_pick]
@@ -86,7 +86,7 @@ RSpec.describe MiniDraftPicks::Hash do
       result = outcome.result
 
       expect(result[:season]).to eq('winter')
-      expect(result[:fpl_teams]).to include(fpl_team_1, fpl_team_2)
+      expect(result[:fpl_teams]).to contain_exactly(fpl_team_1, fpl_team_2)
       expect(result[:next_fpl_team]).to eq(fpl_team_2)
 
       current_mini_draft_pick = result[:current_mini_draft_pick]
@@ -219,14 +219,14 @@ RSpec.describe MiniDraftPicks::Hash do
       outcome = described_class.run(league: league, user: user)
       result = outcome.result
 
-      expect(result[:mini_draft_picks].pluck(:id)).to include(mini_draft_pick_2.id)
-      expect(result[:mini_draft_picks].pluck(:id)).not_to include(mini_draft_pick_1.id, mini_draft_pick_3.id)
+      expect(result[:mini_draft_picks].pluck(:id)).to contain_exactly(mini_draft_pick_2.id)
+      expect(result[:mini_draft_picks].pluck(:id)).not_to contain_exactly(mini_draft_pick_1.id, mini_draft_pick_3.id)
 
       in_player = mini_draft_pick_2.in_player
       out_player = mini_draft_pick_2.out_player
 
 
-      expect(result[:mini_draft_picks]).to include(
+      expect(result[:mini_draft_picks]).to contain_exactly(
         {
           "id" => mini_draft_pick_2.id,
           "pick_number" => mini_draft_pick_2.pick_number,

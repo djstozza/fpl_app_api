@@ -50,18 +50,18 @@ RSpec.describe MiniDraftPicks::Process do
 
     # Updates the list_position, fpl_team, league
     expect(list_position.player).to eq(player_2)
-    expect(fpl_team_list.players).to include(player_2)
-    expect(fpl_team_list.players).not_to include(player_1)
-    expect(fpl_team_1.players).to include(player_2)
-    expect(fpl_team_1.players).not_to include(player_1)
-    expect(league.players).to include(player_2)
-    expect(league.players).not_to include(player_1)
+    expect(fpl_team_list.players).to contain_exactly(player_2)
+    expect(fpl_team_list.players).not_to contain_exactly(player_1)
+    expect(fpl_team_1.players).to contain_exactly(player_2)
+    expect(fpl_team_1.players).not_to contain_exactly(player_1)
+    expect(league.players).to contain_exactly(player_2)
+    expect(league.players).not_to contain_exactly(player_1)
 
     # Valid mini draft pick hash
     mini_draft_pick_hash = outcome.mini_draft_pick_hash
     expect(mini_draft_pick_hash[:next_fpl_team]).to eq(fpl_team_2)
     expect(mini_draft_pick_hash[:current_mini_draft_pick_user]).to eq(fpl_team_2.user)
-    expect(mini_draft_pick_hash[:mini_draft_picks].pluck(:id)).to include(result.id)
+    expect(mini_draft_pick_hash[:mini_draft_picks].pluck(:id)).to contain_exactly(result.id)
 
     current_mini_draft_pick = mini_draft_pick_hash[:current_mini_draft_pick]
     expect(current_mini_draft_pick.pick_number).to eq(MiniDraftPick.count + 1)
@@ -101,7 +101,7 @@ RSpec.describe MiniDraftPicks::Process do
       in_player: player,
     )
 
-    expect(outcome.errors.full_messages).to include("The deadline time for making mini draft picks has passed.")
+    expect(outcome.errors.full_messages).to contain_exactly("The deadline time for making mini draft picks has passed.")
   end
 
   it 'fails if the round is not current' do
@@ -129,7 +129,7 @@ RSpec.describe MiniDraftPicks::Process do
       in_player: player,
     )
 
-    expect(outcome.errors.full_messages).to include(
+    expect(outcome.errors.full_messages).to contain_exactly(
       "You can only make changes to your squad's line up for the upcoming round.",
     )
   end
@@ -160,7 +160,7 @@ RSpec.describe MiniDraftPicks::Process do
       in_player: player,
     )
 
-    expect(outcome.errors.full_messages).to include("Mini draft picks cannot be performed at this time.")
+    expect(outcome.errors.full_messages).to contain_exactly("Mini draft picks cannot be performed at this time.")
   end
 
   it 'fails if the player is owned by another fpl team in the league' do
@@ -192,7 +192,7 @@ RSpec.describe MiniDraftPicks::Process do
     )
 
     expect(outcome.errors.full_messages)
-      .to include("The player you are trying to trade into your team is owned by another team in your league.")
+      .to contain_exactly("The player you are trying to trade into your team is owned by another team in your league.")
   end
 
   it 'fails if the in_player position is not the same as the out_player position' do
@@ -221,7 +221,7 @@ RSpec.describe MiniDraftPicks::Process do
       in_player: player,
     )
 
-    expect(outcome.errors.full_messages).to include("You can only trade players that have the same positions.")
+    expect(outcome.errors.full_messages).to contain_exactly("You can only trade players that have the same positions.")
   end
 
   it 'fails if the fpl team has made consecutive passes' do
@@ -252,7 +252,7 @@ RSpec.describe MiniDraftPicks::Process do
     )
 
     expect(outcome.errors.full_messages)
-      .to include("You have already passed and will not be able to make any more mini draft picks.")
+      .to contain_exactly("You have already passed and will not be able to make any more mini draft picks.")
   end
 
   it 'fails if the fpl team is not the next fpl team' do
@@ -282,7 +282,7 @@ RSpec.describe MiniDraftPicks::Process do
       in_player: player,
     )
 
-    expect(outcome.errors.full_messages).to include("You cannot pick out of turn.")
+    expect(outcome.errors.full_messages).to contain_exactly("You cannot pick out of turn.")
   end
 
   it 'fails if the user does not own the fpl team' do
@@ -312,7 +312,7 @@ RSpec.describe MiniDraftPicks::Process do
       in_player: player,
     )
 
-    expect(outcome.errors.full_messages).to include("You are not authorised to make changes to this team.")
+    expect(outcome.errors.full_messages).to contain_exactly("You are not authorised to make changes to this team.")
   end
 
   it 'fails if the fpl team already has the maximum quota of players from one team' do
@@ -348,6 +348,6 @@ RSpec.describe MiniDraftPicks::Process do
     )
 
     expect(outcome.errors.full_messages)
-      .to include("You can't have more than 3 players from the same team (#{player.team.name}).")
+      .to contain_exactly("You can't have more than 3 players from the same team (#{player.team.name}).")
   end
 end

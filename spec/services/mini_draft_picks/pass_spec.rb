@@ -50,9 +50,6 @@ RSpec.describe MiniDraftPicks::Pass do
   end
 
   it 'fails if the deadline_time has passed' do
-    first_round = FactoryBot.build_stubbed(:round, deadline_time: 1.year.from_now)
-    expect(Round).to receive(:first).and_return(first_round).at_least(1)
-
     round = FactoryBot.build_stubbed(
       :round,
       mini_draft: true,
@@ -63,6 +60,8 @@ RSpec.describe MiniDraftPicks::Pass do
 
     league = FactoryBot.build_stubbed(:league)
     fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
+
+    allow_any_instance_of(described_class).to receive(:mini_draft_pick_hash).and_return({ next_fpl_team: fpl_team })
 
     fpl_team_list = FactoryBot.build_stubbed(
       :fpl_team_list,
@@ -76,7 +75,7 @@ RSpec.describe MiniDraftPicks::Pass do
       fpl_team_list: fpl_team_list,
     )
 
-    expect(outcome.errors.full_messages).to include("The deadline time for making mini draft picks has passed.")
+    expect(outcome.errors.full_messages).to contain_exactly("The deadline time for making mini draft picks has passed.")
   end
 
   it 'fails if the round is not current' do
@@ -98,7 +97,7 @@ RSpec.describe MiniDraftPicks::Pass do
       fpl_team_list: fpl_team_list,
     )
 
-    expect(outcome.errors.full_messages).to include(
+    expect(outcome.errors.full_messages).to contain_exactly(
       "You can only make changes to your squad's line up for the upcoming round.",
     )
   end
@@ -123,6 +122,6 @@ RSpec.describe MiniDraftPicks::Pass do
       fpl_team_list: fpl_team_list,
     )
 
-    expect(outcome.errors.full_messages).to include("Mini draft picks cannot be performed at this time.")
+    expect(outcome.errors.full_messages).to contain_exactly("Mini draft picks cannot be performed at this time.")
   end
 end
