@@ -12,8 +12,7 @@ RSpec.describe Leagues::ProcessNextLineUp do
 
     expect_to_run(FplTeams::ProcessNextLineUp, with: { fpl_team: fpl_team, round: round, next_round: next_round })
 
-    outcome = described_class.run(league: league, round: round, next_round: next_round)
-    expect(outcome).to be_valid
+    described_class.run!(league: league, round: round, next_round: next_round)
   end
 
   it 'does not trigger FplTeams::ProcessNextLineUp if the round is not data_checked' do
@@ -24,8 +23,7 @@ RSpec.describe Leagues::ProcessNextLineUp do
     expect(league).not_to receive(:fpl_teams)
     expect_not_to_run(FplTeams::ProcessNextLineUp)
 
-    outcome = described_class.run(league: league, round: round, next_round: next_round)
-    expect(outcome).to be_valid
+    described_class.run!(league: league, round: round, next_round: next_round)
   end
 
   it 'does not trigger FplTeams::ProcessNextLineUp if there is no next_round' do
@@ -35,7 +33,6 @@ RSpec.describe Leagues::ProcessNextLineUp do
     expect(league).not_to receive(:fpl_teams)
     expect_not_to_run(FplTeams::ProcessNextLineUp)
 
-    outcome = described_class.run(league: league, round: round, next_round: nil)
-    expect(outcome).to be_valid
+    described_class.run!(league: league, round: round, next_round: nil)
   end
 end

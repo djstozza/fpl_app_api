@@ -5,12 +5,12 @@ class WaiverPicks::Delete < WaiverPicks::Base
   validate :fpl_team_list_waiver_pick
 
   def execute
-    waiver_picks.where('pick_number > ?', waiver_pick.pick_number).each do |waiver_pick|
+    waiver_pick.destroy
+
+    waiver_picks.where('pick_number > ?', waiver_pick.pick_number).order(:pick_number).each do |waiver_pick|
       waiver_pick.update(pick_number: waiver_pick.pick_number - 1)
       errors.merge!(waiver_pick.errors)
     end
-
-    waiver_pick.destroy
   end
 
   private

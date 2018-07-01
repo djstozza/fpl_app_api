@@ -1,7 +1,62 @@
 require 'rails_helper'
 
 RSpec.describe WaiverPicks::UpdateOrder do
-  it 'updates the waiver_pick order' do
+  it 'updates the waiver_pick order - increasing pick number' do
+    round = FactoryBot.build_stubbed(:round, deadline_time: 1.week.ago)
+    expect(Round).to receive(:first).and_return(round).at_least(1)
+
+    current_round = FactoryBot.create(:round, is_current: true, deadline_time: 3.days.from_now)
+    league = FactoryBot.create(:league)
+    fpl_team = FactoryBot.create(:fpl_team, league: league)
+    fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team, round: current_round)
+
+    waiver_pick_1 = FactoryBot.create(
+      :waiver_pick,
+      league: league,
+      fpl_team_list: fpl_team_list,
+      round: current_round,
+      pick_number: 1,
+    )
+
+    waiver_pick_2 = FactoryBot.create(
+      :waiver_pick,
+      league: league,
+      fpl_team_list: fpl_team_list,
+      round: current_round,
+      pick_number: 2,
+    )
+
+    waiver_pick_3 = FactoryBot.create(
+      :waiver_pick,
+      league: league,
+      fpl_team_list: fpl_team_list,
+      round: current_round,
+      pick_number: 3,
+    )
+
+    waiver_pick_4 = FactoryBot.create(
+      :waiver_pick,
+      league: league,
+      fpl_team_list: fpl_team_list,
+      round: current_round,
+      pick_number: 4,
+    )
+
+    outcome = described_class.run(
+      fpl_team_list: fpl_team_list,
+      waiver_pick: waiver_pick_4,
+      pick_number: waiver_pick_1.pick_number,
+      user: fpl_team_list.user,
+    )
+
+    expect(outcome).to be_valid
+    expect(waiver_pick_1.reload.pick_number).to eq(2)
+    expect(waiver_pick_2.reload.pick_number).to eq(3)
+    expect(waiver_pick_3.reload.pick_number).to eq(4)
+    expect(waiver_pick_4.reload.pick_number).to eq(1)
+  end
+
+  it 'updates the waiver_pick order - decreasing pick number' do
     round = FactoryBot.build_stubbed(:round, deadline_time: 1.week.ago)
     expect(Round).to receive(:first).and_return(round).at_least(1)
 

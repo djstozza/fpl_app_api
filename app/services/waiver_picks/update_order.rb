@@ -9,21 +9,24 @@ class WaiverPicks::UpdateOrder < WaiverPicks::Base
   validate :change_in_pick_number
 
   def execute
-    if waiver_pick.pick_number > pick_number
+    original_pick_number = waiver_pick.pick_number
+    waiver_pick.update(pick_number: 0)
+
+    if original_pick_number > pick_number
       waiver_picks.where(
         'pick_number >= :new_pick_number AND pick_number <= :old_pick_number',
         new_pick_number: pick_number,
-        old_pick_number: waiver_pick.pick_number,
-      ).each do |pick|
+        old_pick_number: original_pick_number,
+      ).order(pick_number: :desc).each do |pick|
         pick.update(pick_number: pick.pick_number + 1)
         errors.merge!(pick.errors)
       end
-    elsif waiver_pick.pick_number < pick_number
+    elsif original_pick_number <= pick_number
       waiver_picks.where(
         'pick_number <= :new_pick_number AND pick_number >= :old_pick_number',
         new_pick_number: pick_number,
-        old_pick_number: waiver_pick.pick_number,
-      ).each do |pick|
+        old_pick_number: original_pick_number,
+      ).order(:pick_number).each do |pick|
         pick.update(pick_number: pick.pick_number - 1)
         errors.merge!(pick.errors)
       end
@@ -48,7 +51,7 @@ class WaiverPicks::UpdateOrder < WaiverPicks::Base
   end
 
   def valid_pick_number
-    return if waiver_picks.map { |pick| pick.pick_number }.include?(pick_number)
+    return if waiver_picks.pluck(:pick_number).include?(pick_number)
     errors.add(:base, 'Pick number is invalid.')
   end
 

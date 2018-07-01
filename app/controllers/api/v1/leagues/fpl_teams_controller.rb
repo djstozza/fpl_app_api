@@ -12,7 +12,7 @@ class Api::V1::Leagues::FplTeamsController < ApplicationController
 
   # PUT /leagues/:id/fpl_teams/:fpl_team_id.json
   def update
-    outcome = ::Leagues::UpdatePickNumberOrder.run(permitted_params.merge(user: current_api_v1_user))
+    outcome = ::Leagues::UpdateDraftPickNumberOrder.run(permitted_params.merge(user: current_api_v1_user))
     league = outcome.result || outcome.league
 
     response_hash = {

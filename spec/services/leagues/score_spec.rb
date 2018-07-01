@@ -11,7 +11,6 @@ RSpec.describe Leagues::Score do
     expect_to_execute(FplTeamLists::Score, with: { fpl_team_list: fpl_team_list })
     expect_to_execute(FplTeams::Score, with: { fpl_team: fpl_team })
 
-    outcome = described_class.run(league: league, round: round)
-    expect(outcome).to be_valid
+    described_class.run!(league: league, round: round)
   end
 end

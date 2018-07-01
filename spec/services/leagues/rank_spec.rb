@@ -14,8 +14,7 @@ RSpec.describe Leagues::Rank do
     fpl_team_3 = FactoryBot.create(:fpl_team, total_score: 40, league: league)
     fpl_team_list_3 = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team_3, round: round, total_score: 50)
 
-    outcome = described_class.run(league: league, round: round)
-    expect(outcome).to be_valid
+    described_class.run!(league: league, round: round)
 
     expect(fpl_team_1.reload.rank).to eq(1)
     expect(fpl_team_2.reload.rank).to eq(1)
