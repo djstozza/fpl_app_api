@@ -22,12 +22,7 @@ RSpec.describe MiniDraftPicks::Pass do
       }
     )
 
-    outcome = described_class.run(
-      league: league,
-      user: user,
-      fpl_team_list: fpl_team_list,
-    )
-
+    outcome = described_class.run(league: league, user: user, fpl_team_list: fpl_team_list)
     result = outcome.result
 
     # Creates the mini draft pick

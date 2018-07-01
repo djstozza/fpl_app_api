@@ -7,9 +7,9 @@ RSpec.describe MiniDraftPicks::Hash do
 
     league = FactoryBot.build_stubbed(:league)
     user = FactoryBot.build_stubbed(:user)
-    outcome = described_class.run(league: league, user: user)
+    result = described_class.run!(league: league, user: user)
 
-    expect(outcome.result[:league]).to eq(league)
+    expect(result[:league]).to eq(league)
   end
 
   it '#current_user' do
@@ -18,9 +18,9 @@ RSpec.describe MiniDraftPicks::Hash do
 
     league = FactoryBot.build_stubbed(:league)
     user = FactoryBot.build_stubbed(:user)
-    outcome = described_class.run(league: league, user: user)
+    result = described_class.run!(league: league, user: user)
 
-    expect(outcome.result[:current_user]).to eq(user)
+    expect(result[:current_user]).to eq(user)
   end
 
   context '#season' do
@@ -30,8 +30,8 @@ RSpec.describe MiniDraftPicks::Hash do
 
       league = FactoryBot.build_stubbed(:league)
       user = FactoryBot.build_stubbed(:user)
-      outcome = described_class.run(league: league, user: user)
-      expect(outcome.result[:season]).to eq('winter')
+      result = described_class.run!(league: league, user: user)
+      expect(result[:season]).to eq('winter')
     end
 
     it 'is summer if the current time is < the deadline time of the first round' do
@@ -40,8 +40,8 @@ RSpec.describe MiniDraftPicks::Hash do
 
       league = FactoryBot.build_stubbed(:league)
       user = FactoryBot.build_stubbed(:user)
-      outcome = described_class.run(league: league, user: user)
-      expect(outcome.result[:season]).to eq('summer')
+      result = described_class.run!(league: league, user: user)
+      expect(result[:season]).to eq('summer')
     end
   end
 
@@ -55,8 +55,7 @@ RSpec.describe MiniDraftPicks::Hash do
       fpl_team_1 = FactoryBot.create(:fpl_team, league: league, mini_draft_pick_number: 1)
       fpl_team_2 = FactoryBot.create(:fpl_team, league: league, mini_draft_pick_number: 2)
 
-      outcome = described_class.run(league: league, user: user)
-      result = outcome.result
+      result = described_class.run!(league: league, user: user)
 
       expect(result[:season]).to eq('summer')
       expect(result[:fpl_teams]).to contain_exactly(fpl_team_1, fpl_team_2)
@@ -82,8 +81,7 @@ RSpec.describe MiniDraftPicks::Hash do
       fpl_team_1 = FactoryBot.create(:fpl_team, league: league, rank: 1)
       fpl_team_2 = FactoryBot.create(:fpl_team, league: league, rank: 2)
 
-      outcome = described_class.run(league: league, user: user)
-      result = outcome.result
+      result = described_class.run!(league: league, user: user)
 
       expect(result[:season]).to eq('winter')
       expect(result[:fpl_teams]).to contain_exactly(fpl_team_1, fpl_team_2)
@@ -117,8 +115,7 @@ RSpec.describe MiniDraftPicks::Hash do
       FactoryBot.create(:mini_draft_pick, :summer, :passed, fpl_team: fpl_team_2, round: current_round, league: league)
       FactoryBot.create(:mini_draft_pick, :summer, :passed, fpl_team: fpl_team_1, round: current_round, league: league)
 
-      outcome = described_class.run(league: league, user: user)
-      result = outcome.result
+      result = described_class.run!(league: league, user: user)
 
       expect(result[:next_fpl_team]).to eq(fpl_team_1)
       expect(result[:consecutive_passes]).to be_truthy
@@ -157,8 +154,7 @@ RSpec.describe MiniDraftPicks::Hash do
         pick_number: 2,
       )
 
-      outcome = described_class.run(league: league, user: user)
-      result = outcome.result
+      result = described_class.run!(league: league, user: user)
 
       expect(result[:next_fpl_team]).to be_nil
 
@@ -216,8 +212,7 @@ RSpec.describe MiniDraftPicks::Hash do
             pick_number: 1,
           )
 
-      outcome = described_class.run(league: league, user: user)
-      result = outcome.result
+      result = described_class.run!(league: league, user: user)
 
       expect(result[:mini_draft_picks].pluck(:id)).to contain_exactly(mini_draft_pick_2.id)
       expect(result[:mini_draft_picks].pluck(:id)).not_to contain_exactly(mini_draft_pick_1.id, mini_draft_pick_3.id)

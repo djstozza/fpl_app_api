@@ -13,8 +13,7 @@ RSpec.describe FplTeamLists::ProcessTrade do
 
     player = FactoryBot.create(:player)
 
-    outcome = described_class.run(user: fpl_team_list.user, list_position: list_position, in_player: player)
-    result = outcome.result
+    result = described_class.run!(user: fpl_team_list.user, list_position: list_position, in_player: player)
 
     expect(result.player).to eq(player)
     expect(fpl_team_list.players).to contain_exactly(player)

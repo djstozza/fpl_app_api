@@ -7,12 +7,8 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('mini_draft')
     end
 
@@ -23,12 +19,8 @@ describe FplTeamLists::Hash do
 
       expect(Round).to receive(:first).and_return(double(Round, id: 1)).at_least(1)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('waiver')
     end
 
@@ -37,12 +29,8 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('trade')
     end
 
@@ -53,12 +41,8 @@ describe FplTeamLists::Hash do
 
       expect(Round).to receive(:first).and_return(double(Round, id: round.id)).at_least(1)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('trade')
     end
 
@@ -67,12 +51,8 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('pre_game')
     end
 
@@ -81,12 +61,8 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('finished')
     end
 
@@ -95,12 +71,8 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:status]).to eq('started')
     end
   end
@@ -112,12 +84,8 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('mini_draft')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:editable]).to be_truthy
     end
 
@@ -127,12 +95,8 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('waiver')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      result = outcome.result
       expect(result[:editable]).to be_truthy
     end
 
@@ -142,12 +106,7 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('trade')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to be_truthy
     end
 
@@ -157,12 +116,7 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('started')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
     end
 
@@ -172,12 +126,7 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('finished')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
     end
 
@@ -187,12 +136,7 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('pre_game')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
     end
 
@@ -203,32 +147,17 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('waiver')
 
-      outcome = described_class.run(
-        user: user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
 
       allow_any_instance_of(described_class).to receive(:status).and_return('mini_draft')
 
-      outcome = described_class.run(
-        user: user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
 
       allow_any_instance_of(described_class).to receive(:status).and_return('trade')
 
-      outcome = described_class.run(
-        user: user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
     end
   end
@@ -240,24 +169,12 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('started')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
-
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to be_truthy
 
       allow_any_instance_of(described_class).to receive(:status).and_return('finished')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
-
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to be_truthy
     end
 
@@ -267,42 +184,22 @@ describe FplTeamLists::Hash do
 
       allow_any_instance_of(described_class).to receive(:status).and_return('waiver')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
 
       allow_any_instance_of(described_class).to receive(:status).and_return('trade')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
 
       allow_any_instance_of(described_class).to receive(:status).and_return('mini_draft')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
 
       allow_any_instance_of(described_class).to receive(:status).and_return('pre_game')
 
-      outcome = described_class.run(
-        user: fpl_team.user,
-        fpl_team_list: fpl_team_list,
-      )
-
-      result = outcome.result
+      result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
     end
   end
@@ -367,8 +264,7 @@ describe FplTeamLists::Hash do
         show_list_positions: true,
       }
 
-      outcome = described_class.run(params)
-      result = outcome.result
+      result = described_class.run!(params)
 
       hash = list_position_hash(
         player_fixture_histories_arr.first.merge(
@@ -440,8 +336,7 @@ describe FplTeamLists::Hash do
         show_list_positions: true,
       }
 
-      outcome = described_class.run(params)
-      result = outcome.result
+      result = described_class.run!(params)
 
       hash = list_position_hash(
         player_fixture_histories_arr.first.merge(
@@ -478,8 +373,7 @@ describe FplTeamLists::Hash do
         show_list_positions: true,
       }
 
-      outcome = described_class.run(params)
-      result = outcome.result
+      result = described_class.run!(params)
 
       hash = {
         "id" => list_position.id,
@@ -596,8 +490,7 @@ describe FplTeamLists::Hash do
         show_list_positions: true,
       }
 
-      outcome = described_class.run(params)
-      result = outcome.result
+      result = described_class.run!(params)
 
       hash_1 = list_position_hash(
         player_fixture_histories_arr.first.merge(
@@ -646,8 +539,7 @@ describe FplTeamLists::Hash do
           show_waiver_picks: true,
         }
 
-        outcome = described_class.run(params)
-        result = outcome.result
+        result = described_class.run!(params)
 
         out_player = waiver_pick.out_player
         in_player = waiver_pick.in_player
@@ -686,9 +578,7 @@ describe FplTeamLists::Hash do
           show_waiver_picks: true,
         }
 
-        outcome = described_class.run(params)
-        result = outcome.result
-
+        result = described_class.run!(params)
         expect(result[:waiver_picks]).to be_nil
       end
     end
@@ -754,8 +644,7 @@ describe FplTeamLists::Hash do
           show_trade_groups: true,
         }
 
-        outcome = described_class.run(params)
-        result = outcome.result
+        result = described_class.run!(params)
 
         expect(result.dig(:out_trade_groups, 'pending')).to contain_exactly(
           trade_group_hash(
@@ -819,9 +708,7 @@ describe FplTeamLists::Hash do
           show_trade_groups: true,
         }
 
-        outcome = described_class.run(params)
-        result = outcome.result
-
+        result = described_class.run!(params)
         expect(result[:in_trade_groups]).to be_empty
       end
 

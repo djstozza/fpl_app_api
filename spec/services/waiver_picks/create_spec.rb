@@ -11,14 +11,12 @@ RSpec.describe WaiverPicks::Create do
     list_position = FactoryBot.create(:list_position, :fwd, fpl_team_list: fpl_team_list)
     player = FactoryBot.create(:player, :fwd)
 
-    outcome = described_class.run(
+    result = described_class.run!(
       fpl_team_list: fpl_team_list,
       list_position: list_position,
       in_player: player,
       user: fpl_team_list.user,
     )
-
-    result = outcome.result
 
     expect(result.pick_number).to eq(1)
     expect(result.pending?).to be_truthy

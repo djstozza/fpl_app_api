@@ -8,9 +8,7 @@ RSpec.describe FplTeams::ProcessNextLineUp do
     fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team, round: round)
     list_position = FactoryBot.create(:list_position, :starting, :fwd, fpl_team_list: fpl_team_list)
 
-    outcome = described_class.run(fpl_team: fpl_team, round: round, next_round: next_round)
-
-    result = outcome.result
+    result = described_class.run!(fpl_team: fpl_team, round: round, next_round: next_round)
     expect(result.fpl_team).to eq(fpl_team)
     expect(result.round).to eq(next_round)
 

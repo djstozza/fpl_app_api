@@ -11,9 +11,7 @@ RSpec.describe FplTeams::Hash do
       fpl_team: fpl_team,
     }
 
-    outcome = described_class.run(params)
-
-    result = outcome.result
+    result = described_class.run!(params)
 
     expect(result[:fpl_team]).to eq(fpl_team)
     expect(result[:current_user]).to eq(user)
@@ -57,8 +55,7 @@ RSpec.describe FplTeams::Hash do
       return: {},
     )
 
-    outcome = described_class.run(params)
-    result = outcome.result
+    result = described_class.run!(params)
 
     expect(result[:fpl_team]).to eq(fpl_team)
     expect(result[:fpl_team_list]).to eq(fpl_team_list)
