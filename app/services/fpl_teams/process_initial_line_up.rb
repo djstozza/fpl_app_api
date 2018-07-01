@@ -38,5 +38,7 @@ class FplTeams::ProcessInitialLineUp < ApplicationInteraction
         )
       end
     end
+
+    fpl_team_list
   end
 end

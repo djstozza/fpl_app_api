@@ -12,6 +12,7 @@ FactoryBot.define do
     status { 'a' }
     association :team, factory: :team
     position { Position.find_by(singular_name: 'Forward') }
+    ict_index { 1 }
 
     trait :fwd do
       position { Position.find_by(singular_name: 'Forward') }
