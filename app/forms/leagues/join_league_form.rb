@@ -6,10 +6,6 @@ class Leagues::JoinLeagueForm < ApplicationInteraction
   string :code
   string :fpl_team_name
 
-  object :league, class: League, default: -> {
-    League.find_by('lower(name) = :name AND code = :code', name: name, code: code)
-  }
-
   validates :name, :fpl_team_name, :code, presence: true
   validate :league_presence
   validate :fpl_team_name_uniqueness
@@ -28,14 +24,17 @@ class Leagues::JoinLeagueForm < ApplicationInteraction
 
   private
 
+  def league
+    League.find_by('name ILIKE :name AND code ILIKE :code', name: name, code: code)
+  end
+
   def league_presence
     errors.add(:base, 'The league name and/or code you have entered is incorrect.') if league.blank?
   end
 
-
   def fpl_team_name_uniqueness
     return unless FplTeam.where('lower(name) = ?', fpl_team_name.downcase).count.positive?
-    errors.add(:fpl_team_name, 'has already been taken.')
+    errors.add(:fpl_team_name, 'has already been taken')
   end
 
   def already_joined
@@ -52,7 +51,7 @@ class Leagues::JoinLeagueForm < ApplicationInteraction
 
   def inactive_league
     return if league.nil?
-    return unless league.active?
+    return if league.generate_draft_picks?
     errors.add(:base, 'You cannot join an activated league.')
   end
 end

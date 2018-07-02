@@ -52,7 +52,9 @@ Rails.application.routes.draw do
         registrations: 'users/registrations',
       }
 
-      put '/leagues/:league_id/generate_pick_numbers', to: 'leagues/generate_pick_numbers#update'
+      put '/leagues/:league_id/generate_fpl_team_draft_pick_numbers',
+        to: 'leagues/generate_fpl_team_draft_pick_numbers#update'
+
       post '/leagues/:league_id/create_draft', to: 'leagues/create_draft#create'
 
       post '/fpl_team_lists/:fpl_team_list_id/waiver_picks', to: 'fpl_team_lists/waiver_picks#create'

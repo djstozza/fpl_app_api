@@ -25,12 +25,12 @@ class Leagues::UpdateLeagueForm < ApplicationInteraction
   def league_name_uniqueness
     return if name == league.name
     if League.where('lower(name) = ?', name.downcase).count.positive?
-      errors.add(:name, "#{name} has already been taken")
+      errors.add(:name, "has already been taken")
     end
   end
 
   def user_is_commissioner
-    return if league.commissioner = user
+    return if league.commissioner == user
     errors.add(:base, 'You are not authorised to edit this league.')
   end
 end

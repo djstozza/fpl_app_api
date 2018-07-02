@@ -20,9 +20,11 @@ class Leagues::CreateLeagueForm < ApplicationInteraction
     league.assign_attributes(model_fields(:league).merge(commissioner: user))
     league.save
     errors.merge!(league.errors)
+
     fpl_team.assign_attributes(name: fpl_team_name, user: user, league: league)
     fpl_team.save
     errors.merge!(fpl_team.errors)
+
     league
   end
 
