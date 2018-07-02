@@ -32,6 +32,8 @@ RSpec.describe Leagues::CreateDraft do
       .to contain_exactly(7, 10, 23, 26, 39, 42, 55, 58, 71, 74, 87, 90, 103, 106, 119, 122)
     expect(fpl_team_8.draft_picks.pluck(:pick_number))
       .to contain_exactly(8, 9, 24, 25, 40, 41, 56, 57, 72, 73, 88, 89, 104, 105, 120, 121)
+
+    expect(league.draft?).to be_truthy
   end
 
   it '#user_is_commissioner' do

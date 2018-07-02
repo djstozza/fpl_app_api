@@ -13,7 +13,7 @@ class FplTeams::UpdateForm < ApplicationInteraction
   run_in_transaction!
 
   def execute
-    fpl_team.assign_attributes(name: name)
+    fpl_team.assign_attributes(model_fields(:fpl_team))
     fpl_team.save
     errors.merge!(fpl_team.errors)
     fpl_team
@@ -30,6 +30,6 @@ class FplTeams::UpdateForm < ApplicationInteraction
 
   def user_owns_fpl_team
     return if fpl_team.user == user
-    errors.add(:base, 'You are not authorised to edit this league.')
+    errors.add(:base, 'You are not authorised to edit this fpl team.')
   end
 end
