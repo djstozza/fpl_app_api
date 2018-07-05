@@ -2,10 +2,7 @@ class InterTeamTradeGroups::Delete < InterTeamTradeGroups::Base
   object :inter_team_trade_group, class: InterTeamTradeGroup
 
   validate :authorised_user_out_fpl_team
-  validate :round_is_current
-  validate :trade_occurring_in_valid_period
   validate :inter_team_trade_group_unprocessed
-  validate :trade_occurring_in_valid_period
 
   def execute
     status = inter_team_trade_group.status
@@ -26,6 +23,15 @@ class InterTeamTradeGroups::Delete < InterTeamTradeGroups::Base
       )
     end
 
-    'Trade successfully deleted.'
+    OpenStruct.new(
+      success: 'This trade proposal has successfully been deleted.',
+    )
+  end
+
+  private
+
+  def inter_team_trade_group_unprocessed
+    return if inter_team_trade_group.submitted? || inter_team_trade_group.pending?
+    errors.add(:base, 'You cannot delete this trade proposal as it has already been processed.')
   end
 end

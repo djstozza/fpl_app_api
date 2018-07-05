@@ -2,11 +2,11 @@ class InterTeamTradeGroups::Decline < InterTeamTradeGroups::Base
   object :inter_team_trade_group, class: InterTeamTradeGroup
 
   validate :authorised_user_in_fpl_team
-  validate :inter_team_trade_group_unprocessed
-  validate :trade_occurring_in_valid_period
+  validate :inter_team_trade_group_submitted
 
   def execute
-    inter_team_trade_group.update(status: 'declined')
+    inter_team_trade_group.assign_attributes(status: 'declined')
+    inter_team_trade_group.save
     errors.merge!(inter_team_trade_group.errors)
 
     halt_if_errors!
@@ -19,6 +19,15 @@ class InterTeamTradeGroups::Decline < InterTeamTradeGroups::Base
       show_trade_groups: true,
     )
 
-    "You have successfully declined #{out_fpl_team.user.username}'s trade proposal."
+    OpenStruct.new(
+      success: "You have successfully declined #{out_fpl_team.user.username}'s trade proposal.",
+    )
+  end
+
+  private
+
+  def inter_team_trade_group_submitted
+    return if inter_team_trade_group.submitted?
+    errors.add(:base, "You can only decline submitted trade proposals.")
   end
 end

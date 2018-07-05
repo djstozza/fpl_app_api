@@ -2,25 +2,22 @@ class Api::V1::InterTeamTradeGroupsController < ApplicationController
   before_action :authenticate_api_v1_user!
   before_action :set_fpl_team_list, except: :index
 
-  # POST /inter_team_trade_groups
-  # POST /inter_team_trade_groups.json
+  # POST  /api/v1/inter_team_trade_groups
+  # POST  /api/v1/inter_team_trade_groups.json
   def create
     outcome = InterTeamTradeGroups::Create.run(permitted_params.merge(user: current_api_v1_user))
 
     fpl_team_list_hash = outcome.fpl_team_list_hash
 
     if outcome.valid?
-      message = "Successfully created a pending trade - Fpl Team: #{outcome.result.in_fpl_team.name}, " \
-                  "Out: #{outcome.out_player.decorate.name} In: #{outcome.in_player.decorate.name}."
-
-      render json: fpl_team_list_hash.merge(success: message)
+      render json: fpl_team_list_hash.merge(success: outcome.result.success)
     else
       render json: fpl_team_list_hash.merge(error: outcome.errors), status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /inter_team_trade_groups/1
-  # PATCH/PUT /inter_team_trade_groups/1.json
+  # PATCH/PUT  /api/v1/inter_team_trade_groups/1
+  # PATCH/PUT  /api/v1/inter_team_trade_groups/1.json
   def update
     outcome = "InterTeamTradeGroups::#{permitted_params[:trade_action].camelize}".constantize.run(
       permitted_params.merge(user: current_api_v1_user)
@@ -29,7 +26,7 @@ class Api::V1::InterTeamTradeGroupsController < ApplicationController
     fpl_team_list_hash = outcome.fpl_team_list_hash
 
     if outcome.valid?
-      render json: fpl_team_list_hash.merge(success: outcome.result)
+      render json: fpl_team_list_hash.merge(success: outcome.result.success)
     else
       render json: fpl_team_list_hash.merge(error: outcome.errors), status: :unprocessable_entity
     end

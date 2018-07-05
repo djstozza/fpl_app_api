@@ -2,11 +2,10 @@ class InterTeamTradeGroups::RemoveFromTradeGroup < InterTeamTradeGroups::Base
   object :inter_team_trade_group, class: InterTeamTradeGroup
   object :inter_team_trade, class: InterTeamTrade
 
+  delegate :out_player, :in_player, to: :inter_team_trade
+
   validate :authorised_user_out_fpl_team
-  validate :round_is_current
-  validate :trade_occurring_in_valid_period
   validate :inter_team_trade_group_pending
-  validate :trade_occurring_in_valid_period
 
   def execute
     trade = inter_team_trade.delete
@@ -15,16 +14,16 @@ class InterTeamTradeGroups::RemoveFromTradeGroup < InterTeamTradeGroups::Base
     inter_team_trade_group.delete if inter_team_trade_group.inter_team_trades.blank?
     errors.merge!(inter_team_trade_group.errors)
 
-    "Out: #{out_player.decorate.name} - In: #{in_player.decorate.name} has been removed from your trade proposal."
+    OpenStruct.new(
+      success: "Out: #{out_player.decorate.name} - In: #{in_player.decorate.name} has been removed from " \
+                 "your trade proposal.",
+    )
   end
 
   private
 
-  def out_player
-    inter_team_trade.out_player
-  end
-
-  def in_player
-    inter_team_trade.in_player
+  def inter_team_trade_group_pending
+    return if inter_team_trade_group.pending?
+    errors.add(:base, 'You cannot remove picks to this trade proposal as it is no longer pending.')
   end
 end

@@ -3,11 +3,13 @@ class InterTeamTradeGroups::Submit < InterTeamTradeGroups::Base
 
   validate :authorised_user_out_fpl_team
   validate :inter_team_trade_group_pending
-  validate :trade_occurring_in_valid_period
   validate :no_duplicate_trades
+  validate :out_players_in_fpl_team
+  validate :in_players_in_fpl_team
 
   def execute
-    inter_team_trade_group.update(status: 'submitted')
+    inter_team_trade_group.assign_attributes(status: 'submitted')
+    inter_team_trade_group.save
     errors.merge!(inter_team_trade_group.errors)
 
     halt_if_errors!
@@ -20,6 +22,15 @@ class InterTeamTradeGroups::Submit < InterTeamTradeGroups::Base
       show_trade_groups: true,
     )
 
-    'Trade successfully submitted'
+    OpenStruct.new(
+      success: 'This trade proposal has successfully submitted',
+    )
+  end
+
+  private
+
+  def inter_team_trade_group_pending
+    return if inter_team_trade_group.pending?
+    errors.add(:base, 'You can only submit pending trade proposals.')
   end
 end
