@@ -15,11 +15,17 @@
     cron: '*/10 * * * *'
     description: 'Update player stats every 10 minutes'
 
-  Score:
+  RecurringScoringJob:
     cron: '*/10 * * * *'
     description: 'Update fpl_team scores every 10 minutes'
-    class: 'Score::Job'
+    class: 'RecurringScoringJob::Job'
 
-  RecurringWaiverPicksWorker:
+  RecurringExpireTradeGroupsJob:
     cron: '0 */1 * * *'
-    description: 'Check that the date is the same as the waier deadline so that picks can be processed.'
+    description: 'Expire pending and submitted inter_team_trade_groups if the current round deadline time has passed'
+    class: 'RecurringExpireTradeGroupsJob::Job'
+
+  RecurringProcessWaiverPicksJob:
+    cron: '0 */1 * * *'
+    description: 'Process all waiver picks for the current round once the waiver pick deadline has passed'
+    class: 'RecurringProcessWaiverPicksJob::Job'
