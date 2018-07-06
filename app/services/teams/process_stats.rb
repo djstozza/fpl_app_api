@@ -3,18 +3,13 @@ class Teams::ProcessStats < ApplicationInteraction
 
   def execute
     team.update(
-      wins: wins,
-      losses: losses,
-      draws: draws,
       clean_sheets: clean_sheets,
       goals_for: goals_for,
       goals_against: goals_against,
       goal_difference: (goals_for - goals_against),
-      points: (wins * 3 + draws),
       played: fixtures.finished.count,
       form: form,
       current_form: current_form,
-      position: position
     )
   end
 
@@ -22,18 +17,6 @@ class Teams::ProcessStats < ApplicationInteraction
 
   def fixtures
     team.home_fixtures.or(team.away_fixtures).order(:round_id)
-  end
-
-  def wins
-    fixtures_won.count
-  end
-
-  def losses
-    fixtures_lost.count
-  end
-
-  def draws
-    fixtures_drawn.count
   end
 
   def clean_sheets
@@ -124,10 +107,5 @@ class Teams::ProcessStats < ApplicationInteraction
     end
 
     goals
-  end
-
-  def position
-    ladder = Team.pluck(:points, :goal_difference).sort.reverse.uniq
-    ladder.index([team.points, team.goal_difference]) + 1
   end
 end
