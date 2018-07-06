@@ -1,6 +1,6 @@
 class RecurringScoringJob < ApplicationInteraction
   def execute
-    return if Round.last == round && round.finished
+    return unless round
     return if Time.now < round.deadline_time + round.deadline_time_game_offset
 
     League.active.each do |league|

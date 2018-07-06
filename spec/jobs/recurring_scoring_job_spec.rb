@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Score do
+RSpec.describe RecurringScoringJob do
   it 'is valid' do
     round = FactoryBot.create(:round, is_current: true, deadline_time: 1.day.ago)
     next_round = FactoryBot.create(:round, is_next: true)
@@ -25,8 +25,8 @@ RSpec.describe Score do
     expect(outcome).to be_valid
   end
 
-  it 'returns if the final round is finished' do
-    FactoryBot.create(:round, finished: true, deadline_time: 1.day.ago)
+  it 'returns if there is no current round' do
+    FactoryBot.create(:round, is_current: false, deadline_time: 1.week.from_now)
     FactoryBot.create(:league, status: 'active')
 
     expect_not_to_run(::Leagues::Score)

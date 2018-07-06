@@ -130,7 +130,7 @@ RSpec.describe WaiverPicks::Process do
   end
 
   it 'does not process waiver picks prior to the waiver_pick cut_off time' do
-    round = FactoryBot.create(:round, is_current: true, deadline_time: 2.days.from_now)
+    round = FactoryBot.create(:round, is_current: true, deadline_time: 1.day.from_now + 1.minute)
 
     league = FactoryBot.create(:league, status: 'active')
 
