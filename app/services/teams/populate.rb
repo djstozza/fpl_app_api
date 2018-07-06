@@ -18,11 +18,11 @@ class Teams::Populate < ApplicationInteraction
         strength_defence_home: team_response['strength_defence_home'],
         strength_defence_away: team_response['strength_defence_away'],
         team_division: team_response['team_division'],
-      )
-
-      compose(
-        Teams::ProcessStats,
-        team: team
+        wins: team_response['win'],
+        losses: team_response['loss'],
+        draws: team_response['draw'],
+        points: team_response['points'],
+        position: team_response['position'],
       )
     end
   end

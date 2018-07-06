@@ -51,7 +51,7 @@ class TeamDecorator < ApplicationDecorator
       ).each_with_index do |hash, i|
       home_fixture = id == hash[:team_h_id]
 
-      hash[:result] = form[i]
+      hash[:result] = form[i] if form.present?
 
       hash[:score] = "#{hash[:team_h_score]} - #{hash[:team_a_score]}"
 
