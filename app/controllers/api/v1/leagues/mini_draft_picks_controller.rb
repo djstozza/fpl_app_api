@@ -4,7 +4,12 @@ class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
   before_action :set_fpl_team_list, only: [:index]
 
   def index
-    render json: MiniDraftPicks::Hash.run(permitted_params.merge(fpl_team_list: @fpl_team_list, user: current_api_v1_user)).result
+    render json: MiniDraftPicks::Hash.run(
+      permitted_params.merge(
+        fpl_team_list: @fpl_team_list,
+        user: current_api_v1_user,
+      )
+    ).result
   end
 
   def create

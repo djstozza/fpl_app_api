@@ -2,13 +2,6 @@ class Api::V1::FplTeamLists::WaiverPicksController < ApplicationController
   before_action :authenticate_api_v1_user!
   before_action :set_fpl_team_list
 
-  def index
-    fpl_team_list_hash = FplTeamLists::Hash.run(
-      permitted_params.merge(user: current_api_v1_user, show_waiver_picks: true),
-    )
-    render json: fpl_team_list_hash.result
-  end
-
   def create
     outcome = WaiverPicks::Create.run(permitted_params.merge(user: current_api_v1_user))
 

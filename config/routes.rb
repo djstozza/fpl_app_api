@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
       resources :positions, only: [:index]
 
-      resources :leagues, except: [:destroy] do
+      resources :leagues, except: [:index, :destroy] do
         resources :draft_picks,
                   only: [:index, :update],
                   except: [:destroy],
@@ -59,6 +59,7 @@ Rails.application.routes.draw do
 
       post '/fpl_team_lists/:fpl_team_list_id/waiver_picks', to: 'fpl_team_lists/waiver_picks#create'
       put '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
+      patch '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
       delete '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id',
         to: 'fpl_team_lists/waiver_picks#destroy'
 

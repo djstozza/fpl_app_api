@@ -396,7 +396,7 @@ describe FplTeamLists::Hash do
         "finished_provisional" => nil,
         "news" => nil,
         "fixture_id" => nil,
-        "round_id" => 3,
+        "round_id" => round.id,
         "opponent_short_name" => nil,
         "opponent_id" => nil,
         "team_h_difficulty" => nil,
