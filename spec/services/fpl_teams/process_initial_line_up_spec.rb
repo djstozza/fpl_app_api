@@ -30,8 +30,8 @@ RSpec.describe FplTeams::ProcessInitialLineUp do
 
     # Substitute list_positions
     expect(result.list_positions.substitute_gkp.pluck(:player_id)).to contain_exactly(Player.goalkeepers.first.id)
-    expect(result.list_positions.substitute_1.pluck(:player_id)).to contain_exactly(Player.midfielders.first.id)
-    expect(result.list_positions.substitute_2.pluck(:player_id)).to contain_exactly(Player.defenders.first.id)
-    expect(result.list_positions.substitute_3.pluck(:player_id)).to contain_exactly(Player.defenders.second.id)
+    expect(result.list_positions.substitute_1.pluck(:player_id)).to contain_exactly(Player.defenders.first.id)
+    expect(result.list_positions.substitute_2.pluck(:player_id)).to contain_exactly(Player.defenders.second.id)
+    expect(result.list_positions.substitute_3.pluck(:player_id)).to contain_exactly(Player.midfielders.first.id)
   end
 end

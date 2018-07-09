@@ -1,6 +1,6 @@
 class Api::V1::FplTeamsController < ApplicationController
   before_action :authenticate_api_v1_user!
-  before_action :set_fpl_team, only: [:show, :update, :destroy]
+  before_action :set_fpl_team, only: [:show, :update]
 
   def index
     fpl_teams = UserDecorator.new(current_api_v1_user).fpl_teams_arr
@@ -37,7 +37,6 @@ class Api::V1::FplTeamsController < ApplicationController
       render json: result_hash, status: :unprocessable_entity
     end
   end
-
 
   private
 

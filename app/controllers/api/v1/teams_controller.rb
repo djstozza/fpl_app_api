@@ -3,16 +3,16 @@ class Api::V1::TeamsController < ApplicationController
 
   # GET /api/v1/teams
   def index
-    respond_with TeamDecorator.new(nil).teams_hash
+    render json: TeamDecorator.new(nil).teams_hash
   end
 
   # GET /api/v1/teams/1
   def show
-    respond_with(
+    render json: {
       team: @team,
       fixtures: @team.decorate.fixture_hash,
-      players: PlayerDecorator.new(@team.players).players_hash
-    )
+      players: PlayerDecorator.new(@team.players).players_hash,
+    }
   end
 
   private

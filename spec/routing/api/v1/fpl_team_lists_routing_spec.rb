@@ -10,7 +10,7 @@ RSpec.describe Api::V1::FplTeamListsController, type: :routing do
       expect(:get => "#{base_route}1").to route_to({
         controller: "api/v1/fpl_team_lists",
         action: "show",
-        fpl_team_list_id: "1",
+        id: "1",
       })
     end
 

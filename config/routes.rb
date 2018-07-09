@@ -18,13 +18,22 @@ Rails.application.routes.draw do
 
       resources :leagues, except: [:index, :destroy] do
         resources :draft_picks,
-                  only: [:index, :update],
-                  except: [:destroy],
-                  param: :draft_pick_id,
-                  controller: 'leagues/draft_picks'
+          only: [:index, :update],
+          except: [:destroy],
+          param: :draft_pick_id,
+          controller: 'leagues/draft_picks'
 
         resources :fpl_teams, only: [:index, :update], param: :fpl_team_id, controller: 'leagues/fpl_teams'
         resources :unpicked_players, only: [:index], controller: 'leagues/unpicked_players'
+        resources :mini_draft_picks, only: [:index, :create], controller: 'leagues/mini_draft_picks'
+
+        resource :pass_mini_draft_picks, only: [:create], controller: 'leagues/pass_mini_draft_picks'
+
+        resource :generate_fpl_team_draft_pick_numbers,
+          only: [:update],
+          controller: 'leagues/generate_fpl_team_draft_pick_numbers'
+
+        resource :create_draft, only: [:create], controller: 'leagues/create_draft'
 
         member do
           get 'edit'
@@ -35,8 +44,18 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :fpl_teams, except: [:create, :destroy]
-      resources :fpl_team_lists, param: :fpl_team_list_id, only: [:show]
+      resources :fpl_teams, except: [:create, :destroy] do
+        resources :inter_team_trade_groups, only: [:index]
+      end
+
+      resources :fpl_team_lists, only: [:show] do
+        resources :waiver_picks,
+          param: :waiver_pick_id,
+          only: [:create, :update, :destroy],
+          controller: 'fpl_team_lists/waiver_picks'
+
+        resources :tradeable_players, only: [:index], controller: 'fpl_team_lists/tradeable_players'
+      end
 
       resources :list_positions, param: :list_position_id, only: [:show, :update]
 
@@ -51,23 +70,6 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'auth',  controllers: {
         registrations: 'users/registrations',
       }
-
-      put '/leagues/:league_id/generate_fpl_team_draft_pick_numbers',
-        to: 'leagues/generate_fpl_team_draft_pick_numbers#update'
-
-      post '/leagues/:league_id/create_draft', to: 'leagues/create_draft#create'
-
-      post '/fpl_team_lists/:fpl_team_list_id/waiver_picks', to: 'fpl_team_lists/waiver_picks#create'
-      put '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
-      patch '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id', to: 'fpl_team_lists/waiver_picks#update'
-      delete '/fpl_team_lists/:fpl_team_list_id/waiver_picks/:waiver_pick_id',
-        to: 'fpl_team_lists/waiver_picks#destroy'
-
-      get '/fpl_teams/:fpl_team_id/inter_team_trade_groups', to: 'inter_team_trade_groups#index'
-      get '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#index'
-      post '/leagues/:league_id/mini_draft_picks', to: 'leagues/mini_draft_picks#create'
-      post '/leagues/:league_id/pass_mini_draft_picks', to: 'leagues/pass_mini_draft_picks#create'
-      get '/fpl_team_lists/:fpl_team_list_id/tradeable_players', to: 'fpl_team_lists/tradeable_players#index'
     end
   end
 end

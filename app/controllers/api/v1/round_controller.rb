@@ -5,9 +5,6 @@ class Api::V1::RoundController < ApplicationController
 
     fixtures = round.decorate.fixture_hash
 
-    respond_with(
-      round: round,
-      fixtures: fixtures
-    )
+    render json: { round: round, fixtures: fixtures }
   end
 end

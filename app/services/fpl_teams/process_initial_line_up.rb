@@ -17,7 +17,7 @@ class FplTeams::ProcessInitialLineUp < ApplicationInteraction
       ListPosition.create(player: player, position: player.position, fpl_team_list: fpl_team_list, role: 'starting')
     end
 
-    left_over_players = fpl_team.players.where.not(id: starting.pluck(:id))
+    left_over_players = fpl_team.players.where.not(id: starting.pluck(:id)).order(:position_id, :ict_index)
 
     i = 0
     left_over_players.each do |player|

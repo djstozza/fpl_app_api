@@ -6,7 +6,7 @@ class Api::V1::Leagues::MiniDraftPicksController < ApplicationController
   def index
     render json: MiniDraftPicks::Hash.run(
       permitted_params.merge(
-        fpl_team_list: @fpl_team_list,
+        fpl_team_list_id: @fpl_team_list.id,
         user: current_api_v1_user,
       )
     ).result
