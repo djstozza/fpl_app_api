@@ -46,6 +46,7 @@ RSpec.describe "DraftPicks", type: :request do
         Leagues::Activate,
         with: { league: league },
       )
+
       expect_to_delay_run(
         DraftPicks::Broadcast,
         with: {
@@ -83,6 +84,7 @@ RSpec.describe "DraftPicks", type: :request do
         Leagues::Activate,
         with: { league: league },
       )
+
       expect_to_delay_run(
         DraftPicks::Broadcast,
         with: {
@@ -93,8 +95,11 @@ RSpec.describe "DraftPicks", type: :request do
         },
       )
 
-      put api_v1_league_draft_pick_path(league_id: league.id, draft_pick_id: draft_pick.id, mini_draft: mini_draft),
-        headers: auth_headers
+      put api_v1_league_draft_pick_path(
+        league_id: league.id,
+        draft_pick_id: draft_pick.id,
+        mini_draft: mini_draft
+      ), headers: auth_headers
 
       response_hash = league.decorate.draft_response_hash.merge(
         current_user: user,

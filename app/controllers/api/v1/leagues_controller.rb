@@ -1,6 +1,6 @@
 class  Api::V1::LeaguesController < ApplicationController
   before_action :authenticate_api_v1_user!
-  before_action :set_league, only: [:show, :edit, :update, :destroy]
+  before_action :set_league, only: [:show, :edit, :update]
 
   def show
     render json: {
