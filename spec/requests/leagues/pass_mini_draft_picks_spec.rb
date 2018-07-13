@@ -5,9 +5,6 @@ RSpec.describe "PassMiniDraftPicks", type: :request do
       user = FactoryBot.create(:user)
       auth_headers = user.create_new_auth_token
 
-      user = FactoryBot.create(:user)
-      auth_headers = user.create_new_auth_token
-
       round = FactoryBot.create(:round, is_current: true, mini_draft: true, deadline_time: 2.days.from_now)
       league = FactoryBot.create(:league)
       fpl_team = FactoryBot.create(:fpl_team, user: user, league: league)
