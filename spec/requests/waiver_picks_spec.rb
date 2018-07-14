@@ -116,13 +116,7 @@ RSpec.describe "WaiverPicks", type: :request do
       outcome = WaiverPicks::Create.run(params.merge(user: user))
       expect(outcome).not_to be_valid
 
-      expected = FplTeamLists::Hash.run(
-        fpl_team_list: fpl_team_list,
-        user: user,
-        show_waiver_picks: true,
-        user_owns_fpl_team: true,
-      ).result
-
+      expected = outcome.fpl_team_list_hash
       expected[:error] = outcome.errors
 
       expect(response.body).to eq(expected.to_json)
@@ -300,13 +294,7 @@ RSpec.describe "WaiverPicks", type: :request do
       outcome = WaiverPicks::UpdateOrder.run(params.merge(user: user))
       expect(outcome).not_to be_valid
 
-      expected = FplTeamLists::Hash.run(
-        fpl_team_list: fpl_team_list,
-        user: user,
-        show_waiver_picks: true,
-        user_owns_fpl_team: true,
-      ).result
-
+      expected = outcome.fpl_team_list_hash
       expected[:error] = outcome.errors
 
       expect(response.body).to eq(expected.to_json)
@@ -450,13 +438,7 @@ RSpec.describe "WaiverPicks", type: :request do
       outcome = WaiverPicks::Delete.run(params.merge(user: user))
       expect(outcome).not_to be_valid
 
-      expected = FplTeamLists::Hash.run(
-        fpl_team_list: fpl_team_list,
-        user: user,
-        show_waiver_picks: true,
-        user_owns_fpl_team: true,
-      ).result
-
+      expected = outcome.fpl_team_list_hash
       expected[:error] = outcome.errors
 
       expect(response.body).to eq(expected.to_json)

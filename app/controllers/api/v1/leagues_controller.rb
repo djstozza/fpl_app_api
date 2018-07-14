@@ -41,11 +41,6 @@ class  Api::V1::LeaguesController < ApplicationController
     end
   end
 
-  def destroy
-    @league.destroy
-    respond_with(@league)
-  end
-
   private
   def set_league
     @league = League.find(params[:id])

@@ -24,6 +24,7 @@ RSpec.describe "Leagues", type: :request do
 
       expect(response.body).to eq(expected.to_json)
     end
+
     it "responds with 401 if not logged in" do
       league = FactoryBot.create(:league)
 
@@ -31,6 +32,7 @@ RSpec.describe "Leagues", type: :request do
 
       expect(response).to have_http_status(401)
     end
+
     it "responds with 404 when not found" do
       user = FactoryBot.create(:user)
       auth_headers = user.create_new_auth_token
@@ -99,6 +101,30 @@ RSpec.describe "Leagues", type: :request do
 
       expect(response).to have_http_status(401)
     end
+
+    it "responds with 422 if invalid" do
+      user = FactoryBot.create(:user)
+      auth_headers = user.create_new_auth_token
+
+      league = FactoryBot.create(:league)
+
+      params = {
+        code: 'abc123',
+        name: league.name,
+        fpl_team_name: 'bar',
+      }
+
+      post api_v1_leagues_path(league: params), headers: auth_headers
+
+      expect(response).to have_http_status(422)
+
+      form = ::Leagues::CreateLeagueForm.run(params.merge(user: user))
+      expect(form).not_to be_valid
+
+      expected = { error: form.errors }
+
+      expect(response.body).to eq(expected.to_json)
+    end
   end
 
   describe "edit" do
@@ -143,9 +169,11 @@ RSpec.describe "Leagues", type: :request do
     it "is valid" do
       user = FactoryBot.create(:user)
       auth_headers = user.create_new_auth_token
+
       league_name = 'foo'
       code = 'abc123'
       league = FactoryBot.create(:league, commissioner: user)
+
       put api_v1_league_path(
         id: league.id,
         league: {
@@ -196,6 +224,30 @@ RSpec.describe "Leagues", type: :request do
       ), headers: auth_headers
 
       expect(response).to have_http_status(404)
+    end
+
+    it "responds with 422 when invalid" do
+      user = FactoryBot.create(:user)
+      auth_headers = user.create_new_auth_token
+
+      params = {
+        code: 'abc123',
+        name: 'foo',
+      }
+
+      league = FactoryBot.create(:league)
+
+      put api_v1_league_path(
+        id: league.id,
+        league: params,
+      ), headers: auth_headers
+
+      expect(response).to have_http_status(422)
+
+      form = ::Leagues::UpdateLeagueForm.run(params.merge(league: league, user: user))
+      expected = { error: form.errors }
+
+      expect(response.body).to eq(expected.to_json)
     end
   end
 end

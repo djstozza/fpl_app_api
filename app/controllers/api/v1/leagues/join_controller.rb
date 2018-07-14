@@ -3,7 +3,7 @@ class Api::V1::Leagues::JoinController < ApplicationController
 
   # POST /join_leagues.json
   def create
-    form = Leagues::JoinLeagueForm.run(join_league_params.merge(user: current_api_v1_user))
+    form = ::Leagues::JoinLeagueForm.run(join_league_params.merge(user: current_api_v1_user))
 
     if form.valid?
       league = form.result
