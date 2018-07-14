@@ -26,7 +26,7 @@ class FplTeam < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
   validates :user, uniqueness: { scope: :league }
-  validates :draft_pick_number, uniqueness: { scope: :league }
+  validates :draft_pick_number, uniqueness: { scope: :league }, allow_nil: :true
 
   QUOTAS = { team: 3, goalkeepers: 2, midfielders: 5, defenders: 5, forwards: 3, players: 15 }.freeze
 end

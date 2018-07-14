@@ -6,10 +6,10 @@ RSpec.describe "MiniDraftPicks", type: :request do
       user = FactoryBot.create(:user)
       auth_headers = user.create_new_auth_token
 
-      FactoryBot.create(:round, is_current: true)
+      round = FactoryBot.create(:round, is_current: true, mini_draft: true)
       league = FactoryBot.create(:league)
       fpl_team = FactoryBot.create(:fpl_team, user: user, league: league)
-      fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team)
+      fpl_team_list = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team, round: round)
 
       expected = MiniDraftPicks::Hash.run(
         league: league,

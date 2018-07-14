@@ -2,9 +2,9 @@ class FplTeamLists::ProcessTrade < ApplicationInteraction
   object :user, class: User
   object :list_position, class: ListPosition
   object :in_player, class: Player
+  object :out_player, class: Player, default: -> { list_position.player }
 
   delegate :fpl_team_list, to: :list_position
-  delegate :player, to: :list_position, prefix: :out
   delegate :fpl_team, :round, to: :fpl_team_list
   delegate :league, to: :fpl_team
 
