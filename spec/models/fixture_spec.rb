@@ -27,5 +27,12 @@
 require 'rails_helper'
 
 RSpec.describe Fixture, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'requires a unique code' do
+    fixture = FactoryBot.build_stubbed(:fixture, code: nil)
+    expect(fixture).not_to be_valid
+
+    fixture_1 = FactoryBot.create(:fixture)
+    fixture = FactoryBot.build_stubbed(:fixture, code: fixture_1.code)
+    expect(fixture).not_to be_valid
+  end
 end
