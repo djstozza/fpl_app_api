@@ -1,8 +1,6 @@
 class Players::Populate < ApplicationInteraction
-  object :response, class: HTTParty::Response,
-    default: -> { HTTParty.get('https://fantasy.premierleague.com/drf/elements/') }
-
   def execute
+    HTTParty.get('https://fantasy.premierleague.com/drf/teams')
     response.each do |player_json|
       player = Player.find_or_create_by(code: player_json['code'])
       player.update(
@@ -68,5 +66,9 @@ class Players::Populate < ApplicationInteraction
         player: player,
       )
     end
+  end
+
+  def response
+    HTTParty.get('https://fantasy.premierleague.com/drf/elements/')
   end
 end

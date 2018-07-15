@@ -1,9 +1,6 @@
 class Teams::Populate < ApplicationInteraction
-  object :responses, class: HTTParty::Response,
-    default: -> { HTTParty.get('https://fantasy.premierleague.com/drf/teams') }
-
   def execute
-    responses.each do |team_response|
+    response.each do |team_response|
       team = Team.find_or_create_by(code: team_response['code'])
       team.update(
         name: team_response['name'],
@@ -25,5 +22,11 @@ class Teams::Populate < ApplicationInteraction
         position: team_response['position'],
       )
     end
+  end
+
+  private
+
+  def response
+    HTTParty.get('https://fantasy.premierleague.com/drf/teams')
   end
 end

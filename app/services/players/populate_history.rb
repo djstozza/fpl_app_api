@@ -1,7 +1,5 @@
 class Players::PopulateHistory < ApplicationInteraction
   object :player, class: Player
-  object :response, class: HTTParty::Response,
-    default: -> { HTTParty.get("https://fantasy.premierleague.com/drf/element-summary/#{player.id}") }
 
   def execute
     player.update(
@@ -37,5 +35,9 @@ class Players::PopulateHistory < ApplicationInteraction
       attempted_passes
       target_missed
     )
+  end
+
+  def response
+    HTTParty.get("https://fantasy.premierleague.com/drf/element-summary/#{player.id}")
   end
 end

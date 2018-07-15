@@ -1,7 +1,4 @@
 class Rounds::Populate < ApplicationInteraction
-  object :response, class: HTTParty::Response,
-    default: -> { HTTParty.get('https://fantasy.premierleague.com/drf/events') }
-
   def execute
     response.each do |round_json|
       round = Round.find_or_create_by(name: round_json['name'])
@@ -16,5 +13,9 @@ class Rounds::Populate < ApplicationInteraction
         is_next: round_json['is_next'],
       )
     end
+  end
+
+  def response
+    HTTParty.get('https://fantasy.premierleague.com/drf/events')
   end
 end

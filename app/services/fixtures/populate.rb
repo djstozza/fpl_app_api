@@ -1,12 +1,9 @@
 class Fixtures::Populate < ApplicationInteraction
-  object :response, class: HTTParty::Response,
-    default: -> { HTTParty.get('https://fantasy.premierleague.com/drf/fixtures/') }
-
   def execute
     response.each do |fixture_json|
       fixture = Fixture.find_or_create_by(id: fixture_json['id'])
 
-      fixture.update(
+      fixture.update!(
         kickoff_time: fixture_json['kickoff_time'],
         deadline_time: fixture_json['deadline_time'],
         team_h_difficulty: fixture_json['team_h_difficulty'],
@@ -35,7 +32,8 @@ class Fixtures::Populate < ApplicationInteraction
         stats[key_stat]['name'] = key_stat.humanize.titleize
         ['home_team', 'away_team'].each do |team_stat|
           stats[key_stat][team_stat] = []
-          fixture_json['stats'].find { |stat| stat[key_stat] }.dig(key_stat, team_stat[0]).each do |stat|
+
+          fixture_json['stats'].find { |stat| stat[key_stat] }&.dig(key_stat, team_stat[0])&.each do |stat|
             player = Player.find(stat['element'])
             stats[key_stat][team_stat] << {
               value: stat['value'],
@@ -45,10 +43,10 @@ class Fixtures::Populate < ApplicationInteraction
         end
       end
 
-      bps_arr = fixture_json['stats'].find { |stat| stat['bps'] }.dig('bps').map { |_k, v| v }.flatten
-      stats['bps'] = bps_arr.sort { |a, b| b['value'] <=> a['value'] }
+      bps_arr = fixture_json['stats'].find { |stat| stat['bps'] }&.dig('bps')&.map { |_k, v| v }&.flatten
+      stats['bps'] = bps_arr&.sort { |a, b| b['value'] <=> a['value'] }
 
-      fixture.update(stats: stats)
+      fixture.update!(stats: stats)
     end
   end
 
@@ -56,5 +54,9 @@ class Fixtures::Populate < ApplicationInteraction
 
   def key_stats_arr
     %w(goals_scored assists own_goals penalties_saved penalties_missed yellow_cards red_cards saves bonus)
+  end
+
+  def response
+    HTTParty.get('https://fantasy.premierleague.com/drf/fixtures/')
   end
 end

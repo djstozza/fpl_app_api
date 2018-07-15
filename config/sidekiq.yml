@@ -1,19 +1,23 @@
 :schedule:
-  RecurringRoundWorker:
+  RecurringRoundJob:
     cron: '*/10 * * * *'
     description: 'Update round stats every 10 minutes'
+    class: 'RecurringRoundJob::Job'
 
-  RecurringFixtureWorker:
+  RecurringFixtureJob:
     cron: '*/10 * * * *'
     description: 'Update fixture stats every 10 minutes'
+    class: 'RecurringFixtureJob::Job'
 
-  RecurringTeamWorker:
+  RecurringTeamJob:
     cron: '*/10 * * * *'
     description: 'Update team stats every 10 minutes'
+    class: 'RecurringTeamJob::Job'
 
-  RecurringPlayerWorker:
+  RecurringPlayerJob:
     cron: '*/10 * * * *'
     description: 'Update player stats every 10 minutes'
+    class: 'RecurringPlayerJob::Job'
 
   RecurringScoringJob:
     cron: '*/10 * * * *'
