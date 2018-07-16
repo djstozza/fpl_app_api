@@ -378,4 +378,35 @@ RSpec.describe InterTeamTradeGroups::Create do
 
     expect(outcome.errors.full_messages).to contain_exactly("This trade proposal already exists.")
   end
+
+  it '#in_fpl_team_in_league' do
+    round = FactoryBot.build_stubbed(:round, is_current: true, deadline_time: 1.day.from_now)
+    expect(Round).to receive(:current).and_return(round)
+
+    league = FactoryBot.build_stubbed(:league)
+
+    out_fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
+    in_fpl_team = FactoryBot.build_stubbed(:fpl_team)
+
+    out_fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: out_fpl_team, round: round)
+    in_fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: in_fpl_team, round: round)
+
+    out_list_position = FactoryBot.build_stubbed(:list_position, fpl_team_list: out_fpl_team_list)
+    in_list_position = FactoryBot.build_stubbed(:list_position, fpl_team_list: in_fpl_team_list)
+
+    out_player = out_list_position.player
+    in_player = in_list_position.player
+
+    expect(out_fpl_team).to receive(:players).and_return([out_player]).at_least(1)
+    expect(in_fpl_team).to receive(:players).and_return([in_player]).at_least(1)
+
+    outcome = described_class.run(
+      fpl_team_list: out_fpl_team_list,
+      user: out_fpl_team_list.user,
+      out_list_position: out_list_position,
+      in_list_position: in_list_position,
+    )
+
+    expect(outcome.errors.full_messages).to contain_exactly("#{in_fpl_team.name} is not part of your league.")
+  end
 end

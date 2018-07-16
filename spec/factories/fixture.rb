@@ -9,5 +9,15 @@ FactoryBot.define do
     kickoff_time { Time.now }
     started { true }
     finished { true }
+
+    trait :team_h_win do
+      team_h_score { 2 }
+      team_a_score { 0 }
+    end
+
+    trait :team_a_win do
+      team_h_score { 1 }
+      team_a_score { 2 }
+    end
   end
 end

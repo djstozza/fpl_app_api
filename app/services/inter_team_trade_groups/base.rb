@@ -43,7 +43,7 @@ class InterTeamTradeGroups::Base < ApplicationInteraction
 
   def in_fpl_team_in_league
     return if in_fpl_team.league == league
-    errors.add(:base, 'Your fpl team is not part of this league.')
+    errors.add(:base, "#{in_fpl_team.name} is not part of your league.")
   end
 
   def authorised_user_in_fpl_team
@@ -125,11 +125,6 @@ class InterTeamTradeGroups::Base < ApplicationInteraction
     remainder = inter_team_trade_group.in_players - in_fpl_team.players
     return if remainder.empty?
     errors.add(:base, "Not all the players in this proposed trade are in the team (#{in_fpl_team.name}).")
-  end
-
-  def round_deadline_time_passed
-    return if Time.now < round.deadline_time
-    errors.add(:base, "Trades can still occur as the round's deadline time hasn't passed.")
   end
 
   def no_duplicate_trades

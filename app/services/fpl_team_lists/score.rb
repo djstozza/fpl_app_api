@@ -71,14 +71,18 @@ class FplTeamLists::Score < ApplicationInteraction
   end
 
   def process_goalkeeper_substitution
-    starting_goalkeeper = goalkeepers.starting
-    substitute_goalkeeper = goalkeepers.substitutes
-    return if counted(substitute_goalkeeper).blank? || counted(starting_goalkeeper).present?
+    starting_goalkeepers = goalkeepers.starting
+    substitute_goalkeepers = goalkeepers.substitutes
+    return if counted(substitute_goalkeepers).blank? || counted(starting_goalkeepers).present?
 
-    substitute_goalkeeper.first.update(role: 'starting')
+    substitute_goalkeeper = substitute_goalkeepers.first
+
+    substitute_goalkeeper.update(role: 'starting')
     errors.merge!(substitute_goalkeeper.errors)
 
-    starting_goalkeeper.first.update(role: 'substitute_gkp')
+    starting_goalkeeper = starting_goalkeepers.first
+
+    starting_goalkeeper.update(role: 'substitute_gkp')
     errors.merge!(starting_goalkeeper.errors)
   end
 

@@ -91,11 +91,6 @@ class MiniDraftPicks::Process < ApplicationInteraction
     errors.add(:base, "You can only make changes to your squad's line up for the upcoming round.")
   end
 
-  def player_in_fpl_team
-    return if fpl_team.players.include?(out_player)
-    errors.add(:base, 'You can only trade out players that are part of your team.')
-  end
-
   def mini_draft_pick_round
     return if round.mini_draft
     errors.add(:base, 'Mini draft picks cannot be performed at this time.')

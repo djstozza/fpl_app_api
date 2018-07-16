@@ -80,7 +80,7 @@ RSpec.describe DraftPicks::Update do
     expect(outcome.errors.full_messages).to contain_exactly("You cannot pick out of turn.")
   end
 
-  it '#player_unpicked' do
+  it '#player_unpicked - league' do
     league = FactoryBot.build_stubbed(:league, status: 'draft')
     fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
     draft_pick = FactoryBot.build_stubbed(:draft_pick, fpl_team: fpl_team, league: league)
@@ -93,6 +93,21 @@ RSpec.describe DraftPicks::Update do
     outcome = described_class.run(league: league, draft_pick: draft_pick, user: fpl_team.user, player: player)
     expect(outcome.errors.full_messages)
       .to contain_exactly("#{player.decorate.name} is has already been picked by another fpl team in your league.")
+  end
+
+  it '#player_unpicked - fpl_team' do
+    league = FactoryBot.build_stubbed(:league, status: 'draft')
+    fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
+    draft_pick = FactoryBot.build_stubbed(:draft_pick, fpl_team: fpl_team, league: league)
+
+    player = FactoryBot.build_stubbed(:player)
+
+    expect(league.decorate).to receive(:current_draft_pick).and_return(draft_pick)
+    expect(fpl_team.players).to receive(:include?).and_return(true)
+
+    outcome = described_class.run(league: league, draft_pick: draft_pick, user: fpl_team.user, player: player)
+    expect(outcome.errors.full_messages)
+      .to contain_exactly("#{player.decorate.name} is already in your fpl team.")
   end
 
   it '#mini_draft_picked' do

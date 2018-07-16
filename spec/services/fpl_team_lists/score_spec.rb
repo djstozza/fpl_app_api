@@ -79,8 +79,7 @@ RSpec.describe FplTeamLists::Score do
 
     expect_any_instance_of(described_class).not_to receive(:valid_substitution)
 
-    outcome = described_class.run(fpl_team_list: fpl_team_list)
-    expect(outcome).to be_valid
+    described_class.run!(fpl_team_list: fpl_team_list)
 
     expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
     expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
@@ -167,8 +166,7 @@ RSpec.describe FplTeamLists::Score do
 
     expect_any_instance_of(described_class).not_to receive(:valid_substitution)
 
-    outcome = described_class.run(fpl_team_list: fpl_team_list)
-    expect(outcome).to be_valid
+    described_class.run!(fpl_team_list: fpl_team_list)
 
     expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
     expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
@@ -249,8 +247,7 @@ RSpec.describe FplTeamLists::Score do
 
     expect_any_instance_of(described_class).not_to receive(:valid_substitution)
 
-    outcome = described_class.run(fpl_team_list: fpl_team_list)
-    expect(outcome).to be_valid
+    described_class.run!(fpl_team_list: fpl_team_list)
 
     expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
     expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
@@ -374,8 +371,7 @@ RSpec.describe FplTeamLists::Score do
       %w[FWD FWD FWD MID MID MID MID DEF DEF DEF]
     )
 
-    outcome = described_class.run(fpl_team_list: fpl_team_list)
-    expect(outcome).to be_valid
+    described_class.run!(fpl_team_list: fpl_team_list)
 
     # List Position 1 is still starting because the fixture hasn't finished yet (still has the potential to play)
     # even though Player 1 hasn't played any minutes yet
@@ -525,8 +521,7 @@ RSpec.describe FplTeamLists::Score do
         %w[FWD MID MID MID MID DEF DEF DEF DEF DEF],
       )
 
-    outcome = described_class.run(fpl_team_list: fpl_team_list)
-    expect(outcome).to be_valid
+    described_class.run!(fpl_team_list: fpl_team_list)
 
     expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_4)
     expect(fpl_team_list.list_positions.substitutes).to contain_exactly(
@@ -631,11 +626,88 @@ RSpec.describe FplTeamLists::Score do
 
     expect_any_instance_of(described_class).not_to receive(:valid_substitution)
 
-    outcome = described_class.run(fpl_team_list: fpl_team_list)
-    expect(outcome).to be_valid
+    described_class.run!(fpl_team_list: fpl_team_list)
 
     expect(fpl_team_list.list_positions.starting).to contain_exactly(list_position_1)
     expect(fpl_team_list.list_positions.substitutes).to contain_exactly(list_position_2)
     expect(fpl_team_list.total_score).to eq(player_1_total_points)
+  end
+
+  it 'starting goalkeeper played no minutes' do
+    fixture = FactoryBot.create(:fixture, started: true, finished: true)
+    fpl_team_list = FactoryBot.create(:fpl_team_list, round: fixture.round)
+
+    fixture_histories_arr_1 = [
+      {
+        minutes: 0,
+        total_points: 0,
+        was_home: true,
+        bps: 0,
+        round: fixture.round,
+        fixture: fixture,
+      }
+    ]
+
+    player_1 = FactoryBot.create(
+      :player,
+      :gkp,
+      :player_fixture_histories,
+      team: fixture.home_team,
+      player_fixture_histories_arr: fixture_histories_arr_1,
+    )
+
+    player_2_total_points = 5
+
+    fixture_histories_arr_2 = [
+      {
+        minutes: 80,
+        total_points: player_2_total_points,
+        was_home: false,
+        bps: 1,
+        round: fixture.round,
+        fixture: fixture,
+      }
+    ]
+
+    player_2 = FactoryBot.create(
+      :player,
+      :gkp,
+      :player_fixture_histories,
+      team: fixture.away_team,
+      player_fixture_histories_arr: fixture_histories_arr_2,
+    )
+
+    bps_arr = [
+      { "value" => 10, "element" => Faker::Number.number(5) },
+      { "value" => 8, "element" => Faker::Number.number(5) },
+      { "value" => 7, "element" => Faker::Number.number(5) },
+    ]
+
+    fixture.update(
+      stats: {
+        bps: bps_arr
+      }
+    )
+
+    list_position_1 = FactoryBot.create(
+      :list_position,
+      :starting,
+      :gkp,
+      player: player_1,
+      fpl_team_list: fpl_team_list,
+    )
+
+    list_position_2 = FactoryBot.create(
+      :list_position,
+      :sgkp,
+      player: player_2,
+      fpl_team_list: fpl_team_list,
+    )
+
+    described_class.run!(fpl_team_list: fpl_team_list)
+
+    expect(list_position_1.reload.substitute_gkp?).to be_truthy
+    expect(list_position_2.reload.starting?).to be_truthy
+    expect(fpl_team_list.total_score).to eq(player_2_total_points)
   end
 end

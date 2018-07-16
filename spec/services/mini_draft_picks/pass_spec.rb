@@ -119,4 +119,83 @@ RSpec.describe MiniDraftPicks::Pass do
 
     expect(outcome.errors.full_messages).to contain_exactly("Mini draft picks cannot be performed at this time.")
   end
+
+  it 'fails if the user is not authorised' do
+    round = FactoryBot.build_stubbed(:round, mini_draft: true, is_current: true, deadline_time: 2.days.from_now)
+    expect(Round).to receive(:current).and_return(round).at_least(1)
+
+    league = FactoryBot.build_stubbed(:league)
+    fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
+    fpl_team_list = FactoryBot.build_stubbed(
+      :fpl_team_list,
+      fpl_team: fpl_team,
+      round: round,
+    )
+
+    user = FactoryBot.build_stubbed(:user)
+
+    allow_any_instance_of(described_class).to receive(:mini_draft_pick_hash).and_return({ next_fpl_team: fpl_team })
+
+    outcome = described_class.run(
+      league: league,
+      user: user,
+      fpl_team_list: fpl_team_list,
+    )
+
+    expect(outcome.errors.full_messages).to contain_exactly(
+      "You are not authorised to make changes to this team.",
+    )
+  end
+
+  it '#consecutive_passes' do
+    round = FactoryBot.create(:round, mini_draft: true, is_current: true, deadline_time: 2.days.from_now)
+
+    league = FactoryBot.create(:league)
+
+    fpl_team_1 = FactoryBot.create(:fpl_team, league: league, mini_draft_pick_number: 1)
+    fpl_team_list_1 = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team_1, round: round)
+
+
+    FactoryBot.create(:mini_draft_pick, :passed, league: league, fpl_team: fpl_team_1, round: round)
+    FactoryBot.create(:mini_draft_pick, :passed, league: league, fpl_team: fpl_team_1, round: round)
+
+    fpl_team_2 = FactoryBot.create(:fpl_team, league: league, mini_draft_pick_number: 2)
+    fpl_team_list_2 = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team_2, round: round)
+
+    expect_to_delay_run(
+      described_class,
+      with: {
+        league: league,
+        fpl_team_list: fpl_team_list_1,
+        user: fpl_team_1.user,
+      }
+    )
+
+    described_class.run!(league: league, user: fpl_team_2.user, fpl_team_list: fpl_team_list_2)
+  end
+
+  it '#fpl_team_turn' do
+    round = FactoryBot.build_stubbed(:round, mini_draft: true, is_current: true, deadline_time: 2.days.from_now)
+    expect(Round).to receive(:current).and_return(round).at_least(1)
+
+    league = FactoryBot.build_stubbed(:league)
+    fpl_team_1 = FactoryBot.build_stubbed(:fpl_team, league: league)
+    fpl_team_list = FactoryBot.build_stubbed(
+      :fpl_team_list,
+      fpl_team: fpl_team_1,
+      round: round,
+    )
+
+    fpl_team_2 = FactoryBot.build_stubbed(:fpl_team, league: league)
+
+    allow_any_instance_of(described_class).to receive(:mini_draft_pick_hash).and_return({ next_fpl_team: fpl_team_2 })
+
+    outcome = described_class.run(
+      league: league,
+      user: fpl_team_1.user,
+      fpl_team_list: fpl_team_list,
+    )
+
+    expect(outcome.errors.full_messages).to contain_exactly("You cannot pass out of turn.")
+  end
 end

@@ -141,4 +141,18 @@ RSpec.describe FplTeamLists::ProcessTrade do
     expect(outcome.errors.full_messages)
       .to contain_exactly("You can't have more than 3 players from the same team (#{player.team.name}).")
   end
+
+  it '#out_player_in_fpl_team' do
+    round = FactoryBot.build_stubbed(:round, is_current: true, deadline_time: 1.day.from_now)
+    expect(Round).to receive(:current).and_return(round)
+
+    fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, round: round)
+    list_position = FactoryBot.build_stubbed(:list_position, :fwd, :starting, fpl_team_list: fpl_team_list)
+
+    player = FactoryBot.build_stubbed(:player)
+
+    outcome = described_class.run(user: fpl_team_list.user, list_position: list_position, in_player: player)
+    expect(outcome.errors.full_messages)
+      .to contain_exactly("You can only trade out players that are part of your team.")
+  end
 end

@@ -11,6 +11,7 @@ class Teams::ProcessStats < ApplicationInteraction
       form: form,
       current_form: current_form,
     )
+    team
   end
 
   private

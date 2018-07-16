@@ -3,6 +3,9 @@ class MiniDraftPicks::Pass < ApplicationInteraction
   object :user, class: User
   object :fpl_team_list, class: FplTeamList
 
+  delegate :fpl_team, to: :fpl_team_list
+  delegate :round, to: :fpl_team_list
+
   validate :round_is_current
   validate :fpl_team_turn
   validate :authorised_user
@@ -25,7 +28,7 @@ class MiniDraftPicks::Pass < ApplicationInteraction
     if mini_draft_pick_hash[:consecutive_passes]
       self.class.delay.run(
         league: league,
-        fpl_team_list: current_mini_draft_pick.fpl_team.fpl_team_lists.find_by(round: round),
+        fpl_team_list: current_mini_draft_pick.fpl_team.reload.fpl_team_lists.find_by(round: round),
         user: current_mini_draft_pick.fpl_team.user
       )
     else
@@ -40,14 +43,6 @@ class MiniDraftPicks::Pass < ApplicationInteraction
   end
 
   private
-
-  def fpl_team
-    fpl_team_list.fpl_team
-  end
-
-  def round
-    fpl_team_list.round
-  end
 
   def current_mini_draft_pick
     mini_draft_pick_hash[:current_mini_draft_pick]
@@ -81,9 +76,5 @@ class MiniDraftPicks::Pass < ApplicationInteraction
 
   def season
     mini_draft_pick_hash[:season]
-  end
-
-  def fpl_team
-    fpl_team_list.fpl_team
   end
 end

@@ -350,4 +350,87 @@ RSpec.describe MiniDraftPicks::Process do
     expect(outcome.errors.full_messages)
       .to contain_exactly("You can't have more than 3 players from the same team (#{player.team.name}).")
   end
+
+  it '#pass' do
+    round = FactoryBot.create(:round, mini_draft: true, is_current: true, deadline_time: 2.days.from_now)
+
+    league = FactoryBot.create(:league)
+
+    fpl_team_1 = FactoryBot.create(:fpl_team, league: league, mini_draft_pick_number: 1)
+    fpl_team_list_1 = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team_1, round: round)
+
+    player_1 = FactoryBot.create(:player, :fwd)
+
+    fpl_team_2 = FactoryBot.create(:fpl_team, league: league, mini_draft_pick_number: 2)
+    fpl_team_list_2 = FactoryBot.create(:fpl_team_list, fpl_team: fpl_team_2, round: round)
+    list_position = FactoryBot.create(:list_position, :fwd, player: player_1, fpl_team_list: fpl_team_list_2)
+
+    fpl_team_2.players << player_1
+    league.players << player_1
+
+    player_2 = FactoryBot.create(:player)
+
+    FactoryBot.create(:mini_draft_pick, :passed, league: league, fpl_team: fpl_team_1, round: round)
+    FactoryBot.create(:mini_draft_pick, :picked, league: league, fpl_team: fpl_team_2, round: round)
+    FactoryBot.create(:mini_draft_pick, :picked, league: league, fpl_team: fpl_team_2, round: round)
+    FactoryBot.create(:mini_draft_pick, :passed, league: league, fpl_team: fpl_team_1, round: round)
+
+    expect_to_delay_run(
+      MiniDraftPicks::Broadcast,
+      with: {
+        league: league,
+        fpl_team_list: fpl_team_list_2,
+        user: fpl_team_2.user,
+        out_player: player_1,
+        in_player: player_2,
+      }
+    )
+
+    expect_to_delay_run(
+      MiniDraftPicks::Pass,
+      with: {
+        league: league,
+        fpl_team_list: fpl_team_list_1,
+        user: fpl_team_1.user,
+      },
+    )
+
+    described_class.run!(
+      league: league,
+      user: fpl_team_2.user,
+      fpl_team_list: fpl_team_list_2,
+      list_position: list_position,
+      in_player: player_2,
+    )
+  end
+
+  it '#player_in_fpl_team' do
+    round = FactoryBot.build_stubbed(:round, mini_draft: true, is_current: true, deadline_time: 2.days.from_now)
+    expect(Round).to receive(:current).and_return(round).at_least(1)
+
+    league = FactoryBot.build_stubbed(:league)
+    fpl_team = FactoryBot.build_stubbed(:fpl_team, league: league)
+    fpl_team_list = FactoryBot.build_stubbed(
+      :fpl_team_list,
+      fpl_team: fpl_team,
+      round: round,
+    )
+
+    player = FactoryBot.build_stubbed(:player, :fwd)
+    list_position = FactoryBot.build_stubbed(:list_position, :fwd, fpl_team_list: fpl_team_list)
+
+    allow_any_instance_of(described_class).to receive(:mini_draft_pick_hash).and_return({ next_fpl_team: fpl_team })
+    expect(fpl_team.players).to receive(:include?).and_return(false)
+
+    outcome = described_class.run(
+      league: league,
+      user: fpl_team.user,
+      fpl_team_list: fpl_team_list,
+      list_position: list_position,
+      in_player: player,
+    )
+
+    expect(outcome.errors.full_messages)
+      .to contain_exactly("You can only trade out players that are part of your team.")
+  end
 end

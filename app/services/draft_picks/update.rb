@@ -88,7 +88,7 @@ class DraftPicks::Update < ApplicationInteraction
       errors.add(:base, "#{player.decorate.name} is already in your fpl team.")
     end
 
-    return unless league.players.include?(player)
+    return unless league.players.include?(player) && !fpl_team.players.include?(player)
     errors.add(:base, "#{player.decorate.name} is has already been picked by another fpl team in your league.")
   end
 

@@ -1,6 +1,5 @@
 class DraftPicks::Hash < ApplicationInteraction
   object :league, class: League
-  object :user, class: User, default: nil
 
   delegate :fpl_teams, :draft_picks, :players, to: :league
 
@@ -18,7 +17,6 @@ class DraftPicks::Hash < ApplicationInteraction
       unpicked_players: unpicked_players,
       mini_draft_picked: mini_draft_picked?,
       all_players_picked: all_players_picked?,
-      current_user: user,
     }
   end
 
@@ -44,10 +42,6 @@ class DraftPicks::Hash < ApplicationInteraction
       :last_name,
       :mini_draft,
     )
-  end
-
-  def picked_players
-    PlayerDecorator.new(players).players_hash
   end
 
   def unpicked_players

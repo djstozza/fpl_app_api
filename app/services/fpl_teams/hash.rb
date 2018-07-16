@@ -57,9 +57,4 @@ class FplTeams::Hash < ApplicationInteraction
   def set_fpl_team_list
     fpl_team_lists.find_by(round: round)
   end
-
-  def authorised_user
-    return if user_owns_fpl_team
-    errors.add(:unauthorized, 'You are not authorised to visit this page.')
-  end
 end
