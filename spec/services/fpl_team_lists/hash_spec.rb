@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe FplTeamLists::Hash do
-  context '#status' do
+  context '#round_status' do
     it '#mini_draft' do
       round = FactoryBot.build_stubbed(:round, mini_draft: true, deadline_time: 2.days.from_now)
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
@@ -9,7 +9,7 @@ describe FplTeamLists::Hash do
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('mini_draft')
+      expect(result[:round_status]).to eq('mini_draft')
     end
 
     it '#waiver' do
@@ -21,49 +21,54 @@ describe FplTeamLists::Hash do
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('waiver')
+      expect(result[:round_status]).to eq('waiver')
     end
 
     it '#trade' do
+      first_round = FactoryBot.build_stubbed(:round, deadline_time: 1.week.ago)
+      expect(Round).to receive(:first).and_return(first_round).at_least(1)
       round = FactoryBot.build_stubbed(:round, deadline_time: 1.day.from_now)
+
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('trade')
+      expect(result[:round_status]).to eq('trade')
     end
 
-    it 'has status of trade if the deadline time has not been passed and first round' do
+    it 'has round_status of trade if the deadline time has not been passed and first round' do
       round = FactoryBot.build_stubbed(:round, deadline_time: 2.days.from_now)
+      expect(Round).to receive(:first).and_return(round).at_least(1)
+
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
-      expect(Round).to receive(:first).and_return(double(Round, id: round.id)).at_least(1)
-
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('trade')
+      expect(result[:round_status]).to eq('trade')
     end
 
     it '#pre_game' do
       round = FactoryBot.build_stubbed(:round, deadline_time: Time.now, deadline_time_game_offset: 3600)
+
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('pre_game')
+      expect(result[:round_status]).to eq('pre_game')
     end
 
     it '#finished' do
       round = FactoryBot.build_stubbed(:round, deadline_time: 1.day.ago, data_checked: true)
+
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team, round: round)
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('finished')
+      expect(result[:round_status]).to eq('finished')
     end
 
     it '#started' do
@@ -73,68 +78,68 @@ describe FplTeamLists::Hash do
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
-      expect(result[:status]).to eq('started')
+      expect(result[:round_status]).to eq('started')
     end
   end
 
   context '#editable' do
-    it 'is editable if the status is mini_draft and the user owns the fpl_team' do
+    it 'is editable if the round_status is mini_draft and the user owns the fpl_team' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('mini_draft')
+      allow(fpl_team_list.round).to receive(:status).and_return('mini_draft')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
       expect(result[:editable]).to be_truthy
     end
 
-    it 'is editable if the status is waiver and the user owns the fpl_team' do
+    it 'is editable if the round_status is waiver and the user owns the fpl_team' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('waiver')
+      allow(fpl_team_list.round).to receive(:status).and_return('waiver')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
 
       expect(result[:editable]).to be_truthy
     end
 
-    it 'is editable if the status is trade and the user owns the fpl_team' do
+    it 'is editable if the round_status is trade and the user owns the fpl_team' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('trade')
+      allow(fpl_team_list.round).to receive(:status).and_return('trade')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to be_truthy
     end
 
-    it 'is not editable if the status is started and the user owns the fpl_team' do
+    it 'is not editable if the round_status is started and the user owns the fpl_team' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('started')
+      allow(fpl_team_list.round).to receive(:status).and_return('started')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
     end
 
-    it 'is not editable if the status is finished and the user owns the fpl_team' do
+    it 'is not editable if the round_status is finished and the user owns the fpl_team' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('finished')
+      allow(fpl_team_list.round).to receive(:status).and_return('finished')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
     end
 
-    it 'is not editable if the status is pre_game and the user owns the fpl_team' do
+    it 'is not editable if the round_status is pre_game and the user owns the fpl_team' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('pre_game')
+      allow(fpl_team_list.round).to receive(:status).and_return('pre_game')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
@@ -145,17 +150,17 @@ describe FplTeamLists::Hash do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('waiver')
+      allow(fpl_team_list.round).to receive(:status).and_return('waiver')
 
       result = described_class.run!(user: user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('mini_draft')
+      allow(fpl_team_list.round).to receive(:status).and_return('mini_draft')
 
       result = described_class.run!(user: user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('trade')
+      allow(fpl_team_list.round).to receive(:status).and_return('trade')
 
       result = described_class.run!(user: user, fpl_team_list: fpl_team_list)
       expect(result[:editable]).to eq('false')
@@ -163,41 +168,41 @@ describe FplTeamLists::Hash do
   end
 
   context '#show_score' do
-    it 'is true if status is started or finished' do
+    it 'is true if round_status is started or finished' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('started')
+      allow(fpl_team_list.round).to receive(:status).and_return('started')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to be_truthy
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('finished')
+      allow(fpl_team_list.round).to receive(:status).and_return('finished')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to be_truthy
     end
 
-    it 'is false if status is not started or finished' do
+    it 'is false if round_status is not started or finished' do
       fpl_team = FactoryBot.build_stubbed(:fpl_team)
       fpl_team_list = FactoryBot.build_stubbed(:fpl_team_list, fpl_team: fpl_team)
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('waiver')
+      allow(fpl_team_list.round).to receive(:status).and_return('waiver')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('trade')
+      allow(fpl_team_list.round).to receive(:status).and_return('trade')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('mini_draft')
+      allow(fpl_team_list.round).to receive(:status).and_return('mini_draft')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')
 
-      allow_any_instance_of(described_class).to receive(:status).and_return('pre_game')
+      allow(fpl_team_list.round).to receive(:status).and_return('pre_game')
 
       result = described_class.run!(user: fpl_team.user, fpl_team_list: fpl_team_list)
       expect(result[:show_score]).to eq('false')

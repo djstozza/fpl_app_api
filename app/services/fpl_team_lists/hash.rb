@@ -8,7 +8,7 @@ class FplTeamLists::Hash < ApplicationInteraction
 
   validate :authorised_user, if: :show_trade_groups
 
-  delegate :list_positions, :fpl_team, to: :fpl_team_list
+  delegate :list_positions, :fpl_team, :round, to: :fpl_team_list
 
   def execute
     fpl_team_list_hash
@@ -17,7 +17,7 @@ class FplTeamLists::Hash < ApplicationInteraction
   def fpl_team_list_hash
     hash = {}
     hash[:fpl_team_list] = fpl_team_list
-    hash[:status] = status
+    hash[:round_status] = round.status
     hash[:editable] = editable.to_s
     hash[:show_score] = show_score.to_s
 
@@ -110,10 +110,6 @@ class FplTeamLists::Hash < ApplicationInteraction
   end
 
   private
-
-  def round
-    fpl_team_list.round
-  end
 
   def list_position_arr
     list_positions
@@ -211,28 +207,12 @@ class FplTeamLists::Hash < ApplicationInteraction
     }
   end
 
-  def status
-    if round.mini_draft && Time.now < round.deadline_time - 1.day
-      'mini_draft'
-    elsif Time.now < round.deadline_time - 1.day && round.id != Round.first.id
-      'waiver'
-    elsif Time.now < round.deadline_time
-      'trade'
-    elsif round.deadline_time < Time.now && Time.now < round.deadline_time + round.deadline_time_game_offset
-      'pre_game'
-    elsif round.data_checked
-      'finished'
-    else
-      'started'
-    end
-  end
-
   def show_score
-    status == 'started' || status == 'finished'
+    round.status == 'started' || round.status == 'finished'
   end
 
   def editable
-    (status == 'mini_draft' ||  status == 'waiver' || status == 'trade') && user_owns_fpl_team
+    (round.status == 'mini_draft' ||  round.status == 'waiver' || round.status == 'trade') && user_owns_fpl_team
   end
 
   def out_trade_groups

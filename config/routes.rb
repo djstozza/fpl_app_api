@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
       resources :round, only: [:index]
 
+      resources :current_round, only: [:index]
+
       resources :positions, only: [:index]
 
       resources :leagues, except: [:index, :destroy] do
