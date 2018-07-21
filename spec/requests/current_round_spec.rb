@@ -9,7 +9,7 @@ RSpec.describe "CurrentRound", type: :request do
       expected = {
         current_round: round,
         current_round_status: round.status,
-        current_round_deadline_time: round.current_deadline_time,
+        current_round_deadline_time: round.current_deadline_time + 1.second,
       }
 
       expect(response).to have_http_status(200)
