@@ -1,7 +1,7 @@
 class Teams::Populate < ApplicationInteraction
   def execute
     response.each do |team_response|
-      team = Team.find_or_create_by(code: team_response['code'])
+      team = Team.find_or_create_by(id: team_response['id'])
       team.update(
         name: team_response['name'],
         short_name: team_response['short_name'],

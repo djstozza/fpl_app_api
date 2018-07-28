@@ -1,8 +1,7 @@
 class Players::Populate < ApplicationInteraction
   def execute
-    HTTParty.get('https://fantasy.premierleague.com/drf/teams')
     response.each do |player_json|
-      player = Player.find_or_create_by(code: player_json['code'])
+      player = Player.find_or_create_by(id: player_json['id'])
       player.update(
         first_name: player_json['first_name'],
         last_name: player_json['second_name'],
@@ -59,6 +58,7 @@ class Players::Populate < ApplicationInteraction
         ea_index: player_json['ea_index'],
         position_id: player_json['element_type'],
         team_id: player_json['team'],
+        code: player_json['code'],
       )
 
       compose(
