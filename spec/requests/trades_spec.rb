@@ -27,6 +27,7 @@ RSpec.describe "Trades", type: :request do
       ).result
 
       expected[:success] = "Trade successful - Out: #{out_player.decorate.name} In: #{in_player.decorate.name}"
+      expected[:unpicked_players] = league.decorate.unpicked_players
 
       expect(response).to have_http_status(200)
       expect(response.body).to eq(expected.to_json)

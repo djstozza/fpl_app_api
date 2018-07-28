@@ -8,7 +8,10 @@ class Api::V1::TradesController < ApplicationController
 
     if outcome.valid?
       message = "Trade successful - Out: #{outcome.out_player.decorate.name} In: #{outcome.in_player.decorate.name}"
-      render json:  fpl_team_list_hash.merge!(success: message)
+      render json:  fpl_team_list_hash.merge!(
+        success: message,
+        unpicked_players: outcome.fpl_team_list.league.decorate.unpicked_players,
+      )
     else
       render json: fpl_team_list_hash.merge!(error: outcome.errors), status: :unprocessable_entity
     end
