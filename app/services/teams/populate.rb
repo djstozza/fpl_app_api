@@ -15,12 +15,9 @@ class Teams::Populate < ApplicationInteraction
         strength_defence_home: team_response['strength_defence_home'],
         strength_defence_away: team_response['strength_defence_away'],
         team_division: team_response['team_division'],
-        wins: team_response['win'],
-        losses: team_response['loss'],
-        draws: team_response['draw'],
-        points: team_response['points'],
-        position: team_response['position'],
       )
+      next if team.home_fixtures.finished.empty? && team.away_fixtures.empty?
+      compose(Teams::ProcessStats, team: team)
     end
   end
 
