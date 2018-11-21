@@ -14,7 +14,7 @@ FactoryBot.define do
     end
 
     trait :passed do
-      passed true
+      passed { true }
     end
 
     trait :summer do

@@ -31,7 +31,8 @@ class Teams::ProcessStats < ApplicationInteraction
    def losses
     fixtures_lost.count
   end
-   def draws
+
+  def draws
     fixtures_drawn.count
   end
 
@@ -126,6 +127,8 @@ class Teams::ProcessStats < ApplicationInteraction
   end
 
   def position
+    return if team.points.nil? || team.goal_difference.nil?
+
     ladder = Team.pluck(:points, :goal_difference).sort.reverse.uniq
     ladder.index([team.points, team.goal_difference]) + 1
   end

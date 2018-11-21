@@ -32,7 +32,7 @@ FactoryBot.define do
 
     trait :player_fixture_histories do
       transient do
-        player_fixture_histories_arr []
+        player_fixture_histories_arr { [] }
       end
 
       player_fixture_histories {

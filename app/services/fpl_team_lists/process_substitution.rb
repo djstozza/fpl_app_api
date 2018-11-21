@@ -27,7 +27,7 @@ class FplTeamLists::ProcessSubstitution < ApplicationInteraction
 
   def fpl_team_list_hash
     FplTeamLists::Hash.run(
-      fpl_team_list: fpl_team_list,
+      fpl_team_list_id: fpl_team_list.id,
       user: user,
       show_list_positions: true,
       show_waiver_picks: true,
