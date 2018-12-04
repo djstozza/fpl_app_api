@@ -88,8 +88,22 @@ class FplTeamLists::Hash < ApplicationInteraction
         'JOIN list_positions ON list_positions.player_id = players.id AND ' \
         'list_positions.fpl_team_list_id = fpl_team_lists.id'
       )
+      .joins(
+        "LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS (players.player_fixture_histories) fixture_histories ON " \
+        "(fixture_histories ->> 'element')::INT = players.id"
+      )
       .where(leagues: { id: fpl_team.league_id }, fpl_team_lists: { round_id: fpl_team_list.round_id })
       .where.not(fpl_team_lists: { id: fpl_team_list.id })
+      .group(
+        'players.id',
+        'fpl_teams.id',
+        'leagues.id',
+        'fpl_team_lists.id',
+        'rounds.id',
+        'list_positions.id',
+        :singular_name_short,
+        'teams.id',
+      )
       .pluck_to_hash(
         :id,
         'fpl_teams.id AS fpl_team_id',
@@ -101,7 +115,7 @@ class FplTeamLists::Hash < ApplicationInteraction
         :status,
         :news,
         :event_points,
-        :total_points,
+        "SUM((fixture_histories ->> 'total_points')::INT) AS total_points",
         :short_name
       ).map do |hash|
         hash['status'] = status_class_hash[hash['status'].to_sym]
@@ -130,6 +144,20 @@ class FplTeamLists::Hash < ApplicationInteraction
         "(((fixture_history ->> 'was_home')::BOOLEAN IS TRUE AND fixtures.team_h_id = teams.id) OR " \
         "((fixture_history ->> 'was_home')::BOOLEAN IS FALSE AND fixtures.team_a_id = teams.id))"
       )
+      .joins(
+        "LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS (players.player_fixture_histories) fixture_histories ON " \
+        "(fixture_histories ->> 'element')::INT = players.id"
+      )
+      .group(
+        'list_positions.id',
+        'players.id',
+        'positions.id',
+        'fpl_team_lists.id',
+        'teams.id',
+        'fixtures.id',
+        'opponents.id',
+        'fixture_history.value',
+      )
       .order(role: :asc, position_id: :desc, player_id: :asc)
       .pluck_to_hash(
         :id,
@@ -142,7 +170,7 @@ class FplTeamLists::Hash < ApplicationInteraction
         :team_id,
         'teams.short_name AS team_short_name',
         :status,
-        :total_points,
+        "SUM((fixture_histories ->> 'total_points')::INT) AS total_points",
         :fpl_team_list_id,
         :team_h_id,
         :team_a_id,
