@@ -14,14 +14,16 @@ class Rounds::Populate < ApplicationInteraction
       )
     end
 
-    return unless Round.where(mini_draft: true).any?
+    return if Round.where(mini_draft: true).any?
 
     rounds = Round.order(:deadline_time)
 
-    round = rounds.find_by('deadline_time > ?', Round.summer_mini_draft_deadline + 3.days).update(mini_draft: true)
+    round = rounds.find_by('deadline_time > ?', Round.summer_mini_draft_deadline + 3.days)
+    round.update(mini_draft: true)
     errors.merge!(round.errors)
 
-    round = rounds.find_by('deadline_time > ?', Round.winter_mini_draft_deadline + 3.days).update(mini_draft: true)
+    round = rounds.find_by('deadline_time > ?', Round.winter_mini_draft_deadline + 3.days)
+    round.update(mini_draft: true)
     errors.merge!(round.errors)
   end
 
