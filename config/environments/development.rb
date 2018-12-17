@@ -13,11 +13,16 @@ Rails.application.configure do
   config.consider_all_requests_local = true
 
   # Enable/disable caching. By default caching is disabled.
-  if ENV['REDIS_URL']
+  if ENV['REDISCLOUD_URL']
     config.action_controller.perform_caching = true
+
     config.cache_store = :redis_store, ENV['REDISCLOUD_URL']
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
+    }
   else
     config.action_controller.perform_caching = false
+
     config.cache_store = :null_store
   end
 
@@ -31,6 +36,7 @@ Rails.application.configure do
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
+
   config.action_cable.url = 'ws://localhost:3001/cable'
 
   # Raises error for missing translations

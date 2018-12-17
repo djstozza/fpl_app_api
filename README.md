@@ -10,9 +10,9 @@ Users are able to create their own leagues and challenge their friends to see wh
 
 ### Prerequisites
 ```
-Ruby: 2.4.2
-Rails: 5.1.6
-Bundler: 1.16.1
+Ruby: 2.5.3
+Rails: 5.2.2
+Bundler: 1.16.6
 Redis
 ```
 ### Setup
