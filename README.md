@@ -47,6 +47,11 @@ In order to start the background workers:
  1. Open up a new tab in your terminal and run `redis-server`
  2. Open up another tab and run `sidekiq`
 
+#### To run the tests
+```
+bundle exec rspec
+```
+
 ## Logic behind Fpl App Api
 ### Creating/Joining a League
 
