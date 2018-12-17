@@ -6,6 +6,6 @@ FactoryBot.define do
     sequence :email do |n|
       "user#{n}@gmail.com"
     end
-    password 'abcd1234'
+    password { 'abcd1234' }
   end
 end

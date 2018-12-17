@@ -19,12 +19,12 @@ class Rounds::Populate < ApplicationInteraction
     rounds = Round.order(:deadline_time)
 
     round = rounds.find_by('deadline_time > ?', Round.summer_mini_draft_deadline + 3.days)
-    round.update(mini_draft: true)
-    errors.merge!(round.errors)
+    round&.update(mini_draft: true)
+    errors.merge!(round.errors) if round&.errors
 
     round = rounds.find_by('deadline_time > ?', Round.winter_mini_draft_deadline + 3.days)
-    round.update(mini_draft: true)
-    errors.merge!(round.errors)
+    round&.update(mini_draft: true)
+    errors.merge!(round.errors) if round&.errors
   end
 
   def response
