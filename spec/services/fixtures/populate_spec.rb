@@ -41,6 +41,7 @@ RSpec.describe Fixtures::Populate do
     expect(fixture.started).to be_falsy
     expect(fixture.stats).to be_nil
   end
+
   it "creates a fixture - fixture started" do
     fixture = FactoryBot.create(:fixture)
 
@@ -92,7 +93,7 @@ RSpec.describe Fixtures::Populate do
       ],
       "team_h_difficulty" => 5,
       "team_a_difficulty" => 4,
-      "code" => 987593,
+      "code" => fixture.code,
       "kickoff_time" => "2018-08-12T15:00:00Z",
       "team_h_score" => 2,
       "team_a_score" => 1,

@@ -1,16 +1,19 @@
 class Fixtures::Populate < ApplicationInteraction
   def execute
     response.each do |fixture_json|
-      fixture = Fixture.find_or_create_by(id: fixture_json['id'])
+      fixture = Fixture.find_or_create_by(
+        id: fixture_json['id'],
+        code: fixture_json['code'],
+        round_id: fixture_json['event'],
+      )
 
-      fixture.update!(
+      fixture.update(
         kickoff_time: fixture_json['kickoff_time'],
         deadline_time: fixture_json['deadline_time'],
         team_h_difficulty: fixture_json['team_h_difficulty'],
         team_a_difficulty: fixture_json['team_a_difficulty'],
         team_h_score: fixture_json['team_h_score'],
         team_a_score: fixture_json['team_a_score'],
-        round_id: fixture_json['event'],
         minutes: fixture_json['minutes'],
         team_a_id: fixture_json['team_a'],
         team_h_id: fixture_json['team_h'],
@@ -19,7 +22,6 @@ class Fixtures::Populate < ApplicationInteraction
         provisional_start_time: fixture_json['provisional_start_time'],
         finished_provisional: fixture_json['finished_provisional'],
         round_day: fixture_json['event_day'],
-        code: fixture_json['code'],
       )
 
       next unless fixture.started
